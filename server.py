@@ -21,7 +21,7 @@ from circuits.net.events import close, write
 
 DEFAULT_BIND = ("0.0.0.0", 7000)
 
-IGNORE_PATTERNS = ("CSV", "*.bak", "*~",)
+IGNORE_PATTERNS = ("CSV", "*.bak", "*~", ".*")
 
 DEFAULT_TYPE = "9"
 
