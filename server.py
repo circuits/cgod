@@ -51,8 +51,7 @@ def get_type(p):
 def gophermap(req, docroot):
     lines = []
 
-    host = req.local_addr[0]
-    port = req.local_addr[1]
+    host, port = req.local_addr
 
     if docroot != req.server.docroot:
         type, name = "1", ".."
@@ -164,9 +163,6 @@ class Server(Component):
         self.docroot = Path.cwd()
 
         self.streams = bidict()
-
-        # from circuits import Debugger
-        # Debugger().register(self)
 
     @handler("read", channel="*")
     def read(self, event, *args):
