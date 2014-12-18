@@ -19,7 +19,7 @@ from circuits.net.sockets import TCPServer
 from circuits.net.events import close, write
 
 
-DEFAULT_BIND = ("0.0.0.0", 7000)
+DEFAULT_BIND = ("0.0.0.0", 70)
 
 IGNORE_PATTERNS = ("CSV", "*.bak", "*~", ".*")
 

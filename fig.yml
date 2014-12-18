@@ -1,0 +1,4 @@
+cgod:
+    build: .
+    ports:
+      - "70:70"
