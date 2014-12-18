@@ -203,7 +203,7 @@ class Server(Component):
                 self.streams[channel] = (req, File(filename, channel=channel).register(self))
                 return
 
-            response = "3File not found!\t\terror.host0"
+            response = "3File not found!\t\terror.host\t0"
 
         self.fire(write(req.sock, response))
         self.fire(close(req.sock))
