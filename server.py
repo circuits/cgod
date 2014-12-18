@@ -34,6 +34,9 @@ TYPE_MAP = (
 
 
 def get_type(p):
+    if p.is_dir() or p.is_symlink():
+        return "1"
+
     mimetype, encoding = guess_type(p.name)
     if mimetype is None:
         return DEFAULT_TYPE
@@ -57,7 +60,7 @@ def gophermap(req, docroot):
 
         type = get_type(p)
         name = p.name
-        selector = p.relative_to(docroot)
+        selector = docroot.joinpath(p).relative_to(req.server.docroot)
 
         lines.append("{}{}\t{}\t{}\t{}".format(type, name, selector, host, port))
 
@@ -89,8 +92,14 @@ def normalize(selector):
 
 
 def resolvepath(docroot, selector):
+    # Strip type
+    if selector:
+        selector = selector[1:]
+
+    # Strip leading /
     if selector and selector[0] == "/":
         selector = selector[1:]
+
     return docroot.joinpath(selector)
 
 
