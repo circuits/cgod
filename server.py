@@ -54,6 +54,11 @@ def gophermap(req, docroot):
     host = req.local_addr[0]
     port = req.local_addr[1]
 
+    if docroot != req.server.docroot:
+        type, name = "1", ".."
+        selector = Path().joinpath(*docroot.parts[:-1]).relative_to(req.server.docroot)
+        lines.append("{}{}\t{}\t{}\t{}".format(type, name, selector, host, port))
+
     for p in docroot.iterdir():
         if any((p.match(pattern) for pattern in IGNORE_PATTERNS)):
             continue
