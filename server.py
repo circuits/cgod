@@ -67,7 +67,7 @@ def gophermap(req, docroot):
         name = p.name
         selector = docroot.joinpath(p).relative_to(req.server.docroot)
 
-        lines.append("{}{}\t{}\t{}\t{}".format(type, name, selector, host, port))
+        lines.append("{}{}\t/{}\t{}\t{}".format(type, name, selector, host, port))
 
     return "\r\n".join(lines)
 
@@ -194,7 +194,7 @@ class Server(Component):
     def request(self, req):
         filepath = resolvepath(self.docroot, req.selector)
 
-        if not req.selector or (req.selector and req.selector[0] == "1"):
+        if filepath.is_dir() or filepath.is_symlink():
             response = "{}\r\n.".format(gophermap(req, filepath))
         else:
             if filepath.exists():
