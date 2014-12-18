@@ -35,6 +35,8 @@ TYPE_MAP = (
 
 def get_type(p):
     mimetype, encoding = guess_type(p.name)
+    if mimetype is None:
+        return DEFAULT_TYPE
 
     for (pattern, gophertype)in TYPE_MAP:
         if fnmatch(mimetype, pattern):
