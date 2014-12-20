@@ -67,6 +67,8 @@ class CorePlugin(BasePlugin):
         if path != root:
             type, name = "1", ".."
             selector = Path().joinpath(*path.parts[:-1]).relative_to(root)
+            slash = "" if req.selector[-1] == "/" else "/"
+            selector = "{}{}{}".format(req.selector, slash, selector)
             res.add_link(type, name, selector)
 
         for p in path.iterdir():
@@ -76,6 +78,8 @@ class CorePlugin(BasePlugin):
             type = get_type(p)
             name = p.name
             selector = path.joinpath(p).relative_to(root)
+            slash = "" if req.selector[-1] == "/" else "/"
+            selector = "{}{}{}".format(req.selector, slash, selector)
 
             res.add_link(type, name, selector)
 
