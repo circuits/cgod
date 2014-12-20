@@ -6,7 +6,7 @@ from __future__ import print_function
 import re
 from fnmatch import fnmatch
 from uuid import uuid4 as uuid
-from mimetypes import guess_type
+from mimetypes import add_type, guess_type
 
 
 from pathlib import Path
@@ -25,12 +25,22 @@ IGNORE_PATTERNS = ("CSV", "*.bak", "*~", ".*")
 
 DEFAULT_TYPE = "9"
 
+EXTRA_MIME_TYPES = (
+    ("text/x-markdown", ".md"),
+    ("text/x-rst", ".rst"),
+    ("text/x-yaml", ".yml"),
+)
+
 TYPE_MAP = (
     ("text/html", "h",),
     ("image/gif", "g",),
     ("text/*", "0"),
     ("image/*", "I"),
 )
+
+
+for ext, mimetype in EXTRA_MIME_TYPES:
+    add_type(ext, mimetype)
 
 
 def get_type(p):
