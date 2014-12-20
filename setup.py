@@ -37,12 +37,14 @@ setup(
     packages=find_packages("."),
     install_requires=[
         "bidict",
+        "cidict",
         "pathlib",
+        "pymills",
         "circuits",
     ],
     entry_points={
         "console_scripts": [
-            "cgod=cgod.__main__:main"
+            "cgod=cgod.main:main"
         ]
     },
     zip_safe=True
