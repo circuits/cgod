@@ -6,7 +6,7 @@ from __future__ import print_function
 import re
 from fnmatch import fnmatch
 from uuid import uuid4 as uuid
-from mimetypes import guess_type
+from mimetypes import add_type, guess_type
 
 
 from pathlib import Path
@@ -21,9 +21,18 @@ from circuits.net.events import close, write
 
 DEFAULT_BIND = ("0.0.0.0", 70)
 
+DEFAULT_HOST = "localhost"
+DEFAULT_PORT = 70
+
 IGNORE_PATTERNS = ("CSV", "*.bak", "*~", ".*")
 
 DEFAULT_TYPE = "9"
+
+EXTRA_MIME_TYPES = (
+    ("text/x-markdown", ".md"),
+    ("text/x-rst", ".rst"),
+    ("text/x-yaml", ".yml"),
+)
 
 TYPE_MAP = (
     ("text/html", "h",),
@@ -31,6 +40,10 @@ TYPE_MAP = (
     ("text/*", "0"),
     ("image/*", "I"),
 )
+
+
+for ext, mimetype in EXTRA_MIME_TYPES:
+    add_type(ext, mimetype)
 
 
 def get_type(p):
@@ -48,7 +61,34 @@ def get_type(p):
     return DEFAULT_TYPE
 
 
-def gophermap(req, docroot):
+def process_gophermap(gophermap):
+    lines = []
+
+    with gophermap.open("r") as f:
+        for line in f:
+            line = line.strip()
+
+            if "\t" in line:
+                parts = line.split("\t")
+                if len(parts) < 4:
+                    parts += [None] * (4 - len(parts))
+
+                name, selector, host, port = parts
+                host = host or DEFAULT_HOST
+                port = port or DEFAULT_PORT
+
+                lines.append("{}\t{}\t{}\t{}".format(name, selector, host, port))
+            else:
+                lines.append(line)
+
+    return "\r\n".join(lines)        
+
+
+def handle_directory(req, docroot):
+    gophermap = docroot.joinpath("gophermap")
+    if gophermap.exists():
+        return process_gophermap(gophermap)
+
     lines = []
 
     host, port = req.local_addr
@@ -191,7 +231,7 @@ class Server(Component):
         filepath = resolvepath(self.docroot, req.selector)
 
         if filepath.is_dir() or filepath.is_symlink():
-            response = "{}\r\n.".format(gophermap(req, filepath))
+            response = "{}\r\n.".format(handle_directory(req, filepath))
         else:
             if filepath.exists():
                 channel = uuid()
@@ -199,7 +239,7 @@ class Server(Component):
                 self.streams[channel] = (req, File(filename, channel=channel).register(self))
                 return
 
-            response = "3File not found!\t\terror.host\t0"
+            response = "3File not found!\t\terror.host\t0\r\n."
 
         self.fire(write(req.sock, response))
         self.fire(close(req.sock))
