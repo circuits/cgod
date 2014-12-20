@@ -35,7 +35,9 @@ class Server(Component):
 
         self.logger = getLogger(__name__)
 
+        self.homedir = Path("/home")
         self.rootdir = Path(self.config["rootdir"])
+        self.userdir = self.config["userdir"]
 
         if ":" in config["bind"]:
             address, port = config["bind"].split(":")

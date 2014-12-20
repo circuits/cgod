@@ -34,10 +34,6 @@ def normalize(path):
 
 
 def resolvepath(root, path):
-    # Strip type
-    if path:
-        path = path[1:]
-
     # Strip leading /
     if path and path[0] == "/":
         path = path[1:]

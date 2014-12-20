@@ -114,7 +114,7 @@ class Response(object):
         host = host or self.req.server.host
         port = port or self.req.server.port
 
-        self._lines.append("{}{}\t/{}\t{}\t{}".format(type, text, path, host, port))
+        self._lines.append("{}{}\t{}\t{}\t{}".format(type, text, path, host, port))
 
     def add_telnet(self, text, host, port=23):
         """

@@ -51,18 +51,22 @@ class CorePlugin(BasePlugin):
                     type_name, selector, host, port = parts
                     type, name = type_name[0], type_name[1:]
 
+                    if host is None or host == req.server.host:
+                        slash = "" if req.selector[-1] == "/" else "/"
+                        selector = "{}{}{}".format(req.selector, slash, selector)
+
                     res.add_link(type, name, selector, host, port)
                 else:
                     res.add_text(line)
 
-    def handle_directory(self, req, res, path):
+    def handle_directory(self, req, res, path, root):
         gophermap = path.joinpath("gophermap")
         if gophermap.exists():
             return self.process_gophermap(req, res, gophermap)
 
-        if path != req.server.rootdir:
+        if path != root:
             type, name = "1", ".."
-            selector = Path().joinpath(*path.parts[:-1]).relative_to(req.server.rootdir)
+            selector = Path().joinpath(*path.parts[:-1]).relative_to(root)
             res.add_link(type, name, selector)
 
         for p in path.iterdir():
@@ -71,7 +75,7 @@ class CorePlugin(BasePlugin):
 
             type = get_type(p)
             name = p.name
-            selector = path.joinpath(p).relative_to(req.server.rootdir)
+            selector = path.joinpath(p).relative_to(root)
 
             res.add_link(type, name, selector)
 
@@ -84,12 +88,19 @@ class CorePlugin(BasePlugin):
 
     @handler("request")
     def on_request(self, event, req, res):
-        path = resolvepath(self.server.rootdir, req.selector)
+        parts = req.selector.split("/")
+
+        if len(parts) > 1 and parts[1] and parts[1][0] == "~":
+            root = Path(self.server.homedir.joinpath(parts[1][1:], self.server.userdir))
+            path = resolvepath(root, "/".join(parts[2:]))
+        else:
+            root = self.server.rootdir
+            path = resolvepath(root, req.selector)
 
         if not path.exists():
             res.error = "Resource not found!"
         elif path.resolve().is_dir():
-            self.handle_directory(req, res, path)
+            self.handle_directory(req, res, path, root)
         else:
             self.handle_file(req, res, path)
 
