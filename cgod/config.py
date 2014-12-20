@@ -117,6 +117,13 @@ class Config(reprconf.Config):
         )
 
         add(
+            "-u", "--userdir",
+            action="store", type=str,
+            default="gopher", dest="userdir",
+            help="Set document root for users"
+        )
+
+        add(
             "-H", "--host",
             action="store", type=str,
             default="localhost", dest="host",
