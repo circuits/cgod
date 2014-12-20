@@ -137,6 +137,10 @@ class Config(reprconf.Config):
                 self.update(config)
 
         for option, value in namespace.__dict__.items():
+            key = "{}{}".format(self.prefix, option.upper())
+            if key in environ and environ[key] != parser.get_default(option):
+                continue
+
             if option not in self and value is not None:
                 self[option] = value
 
