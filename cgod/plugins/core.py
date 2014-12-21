@@ -11,6 +11,7 @@ __author__ = "James Mills, prologic at shortcircuit dot net dot au"
 
 
 from uuid import uuid4 as uuid
+from subprocess import check_output
 
 
 from pathlib import Path
@@ -38,11 +39,15 @@ class CorePlugin(BasePlugin):
 
                 if not line:
                     res.add_line()
+                elif line == ".":
+                    break
                 elif line[0] == "#":
                     # Ignore Comments
                     continue
                 elif line[0] == "!":
                     res.add_title(line[1:])
+                elif line[0] == "=":
+                    res.add_text(check_output(line[1:], env=req.environ, shell=True))
                 elif "\t" in line:
                     parts = line.split("\t")
                     if len(parts) < 4:
