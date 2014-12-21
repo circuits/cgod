@@ -10,6 +10,7 @@ Main entry point responsible for configuring and starting the application.
 
 
 import logging
+from os import chdir
 from logging import getLogger
 
 
@@ -34,12 +35,13 @@ def setup_logging(config):
 def main():
     config = Config()
 
+    chdir(config["rootdir"])
+
     logger = setup_logging(config)
 
     manager = Manager()
 
-    Worker(channel="threadpool").register(manager)
-    Worker(channel="processpool").register(manager)
+    Worker(channel="workers").register(manager)
 
     if config["debug"]:
         Debugger(

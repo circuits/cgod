@@ -37,6 +37,19 @@ class Request(object):
             self.remote_addr[0], self.remote_addr[1], self.selector
         )
 
+    @property
+    def environ(self):
+        return {
+            "REMOTE_ADDR": self.remote_addr[0],
+            "LOCAL_ADDR": self.local_addr[0],
+            "SCRIPT_NAME": self.selector,
+            "SERVER_HOST": self.server.host,
+            "SERVER_PORT": str(self.server.port),
+            "CHARSET": self.server.encoding,
+            "DOCUMENT_ROOT": str(self.server.rootdir),
+
+        }
+
 
 class Response(object):
 
