@@ -29,10 +29,19 @@ from ..gophertypes import get_type
 IGNORE_PATTERNS = ("CSV", "*.bak", "*~", ".*")
 
 
+def execute(req, *args):
+    try:
+        check_output(*args, env=req.environ, shell=True)
+    except Exception as error:
+        return "ERROR: {}".format(error)
+
+
 class CorePlugin(BasePlugin):
     """Core Plugin"""
 
-    def process_gophermap(self, req, res, gophermap):
+    def process_gophermap(self, req, res, gophermap):  # noqa
+        # XXX: C901 McCabe complexity 11
+
         with gophermap.open("r") as f:
             for line in f:
                 line = line.strip()
@@ -47,7 +56,7 @@ class CorePlugin(BasePlugin):
                 elif line[0] == "!":
                     res.add_title(line[1:])
                 elif line[0] == "=":
-                    res.add_text(check_output(line[1:], env=req.environ, shell=True))
+                    res.add_text(execute(req, line[1:]))
                 elif "\t" in line:
                     parts = line.split("\t")
                     if len(parts) < 4:
