@@ -56,78 +56,78 @@ class Config(reprconf.Config):
         add(
             "-c", "--config", action="store", default=None,
             dest="config", metavar="FILE", type=str,
-            help="read configuration from FILE"
+            help="Read configuration from FILE"
         )
 
         add(
             "-D", "--debug", action="store_true", default=False,
             dest="debug",
-            help="enable debugging mode"
+            help="Enable debug mode"
         )
 
         add(
             "-d", "--daemon", action="store_true", default=False,
             dest="daemon",
-            help="run as a background process"
+            help="Run as a daemon"
         )
 
         add(
             "-V", "--verbose", action="store_true", default=False,
             dest="verbose",
-            help="enable verbose logging"
+            help="Enable verbose logging"
         )
 
         add(
             "-l", "--logfile", action="store", default="-",
             dest="logfile", metavar="FILE", type=FileType(mode="w"),
-            help="store logging information to FILE"
+            help="Write logs to FILE"
         )
 
         add(
             "-p", "--pidfile", action="store", default="cgod.pid",
             dest="pidfile", metavar="FILE", type=str,
-            help="write process id to FILE"
+            help="Write pid to FILE"
         )
 
         add(
             "-P", "--plugin",
             action="append", default=plugins.DEFAULTS, dest="plugins",
-            help="Plugin to load (multiple allowed)"
+            help="Plugins to load (multiple allowed)"
         )
 
         add(
             "-b", "--bind",
             action="store", type=str,
-            default="0.0.0.0:70", dest="bind",
-            help="Bind to address:[port]"
+            default="0.0.0.0:70", metavar="INT", dest="bind",
+            help="Bind to interface INT"
         )
 
         add(
             "-e", "--encoding",
             action="store", type=str,
             default="UTF-8", dest="encoding",
-            help="Set default charset encoding"
+            help="Set default encoding"
         )
 
         add(
             "-r", "--rootdir",
             action="store", type=str,
             default=getcwd(), dest="rootdir",
-            help="Set document root directory"
+            help="Set root directory"
         )
 
         add(
             "-u", "--userdir",
             action="store", type=str,
             default="gopher", dest="userdir",
-            help="Set document root for users"
+            help="Set user directory"
         )
 
         add(
             "-H", "--host",
             action="store", type=str,
             default="localhost", dest="host",
-            help="Gopher hostname for selectors"
+            help="Set hostname"
         )
 
         namespace = parser.parse_args()
