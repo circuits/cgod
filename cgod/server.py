@@ -32,6 +32,7 @@ class Server(Component):
         self.config = config
 
         self.encoding = self.config["encoding"]
+        self.debug = self.config["debug"]
 
         self.logger = getLogger(__name__)
 
@@ -67,14 +68,14 @@ class Server(Component):
     def read(self, sock, data):
         host, port = sock.getpeername()
 
-        self.logger.info(
+        self.logger.debug(
             "I: [{0:s}:{1:d}] {2:s}".format(host, port, repr(data))
         )
 
     def write(self, sock, data):
         host, port = sock.getpeername()
 
-        self.logger.info(
+        self.logger.debug(
             "O: [{0:s}:{1:d}] {2:s}".format(host, port, repr(data))
         )
 
