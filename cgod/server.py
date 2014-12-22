@@ -79,7 +79,9 @@ class Server(Component):
             "O: [{0:s}:{1:d}] {2:s}".format(host, port, repr(data))
         )
 
-    def response(self, res):
+    def response_complete(self, event, evt, val):
+        res = evt.args[0]
+
         if not res.stream:
             self.fire(write(res.req.sock, bytes(res)))
             self.fire(close(res.req.sock))

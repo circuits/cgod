@@ -122,4 +122,7 @@ class CorePlugin(BasePlugin):
         else:
             self.handle_file(req, res, path)
 
+    @handler("request_complete")
+    def on_request_complete(self, event, evt, val):
+        req, res = evt.args
         self.fire(response(res))
