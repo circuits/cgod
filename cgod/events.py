@@ -15,6 +15,9 @@ from circuits import Event
 class request(Event):
     """request Event"""
 
+    complete = True
 
 class response(Event):
     """response Event"""
+
+    complete = True
