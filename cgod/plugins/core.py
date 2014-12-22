@@ -31,7 +31,7 @@ IGNORE_PATTERNS = ("CSV", "*.bak", "*~", ".*")
 
 def execute(req, *args):
     try:
-        check_output(*args, env=req.environ, shell=True)
+        return check_output(*args, env=req.environ, shell=True)
     except Exception as error:
         return "ERROR: {}".format(error)
 
