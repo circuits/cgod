@@ -23,7 +23,7 @@ from circuits.net.events import close, write
 from ..events import response
 from ..plugin import BasePlugin
 from ..gophertypes import get_type
-from ..utils import execute, is_executable, resolvepath
+from ..utils import execute, is_executable, resolvepath, which
 
 
 IGNORE_PATTERNS = ("CSV", "gophermap", "*.bak", "*~", ".*")
@@ -32,7 +32,7 @@ IGNORE_PATTERNS = ("CSV", "gophermap", "*.bak", "*~", ".*")
 class CorePlugin(BasePlugin):
     """Core Plugin"""
 
-    def handle_gophermap(self, req, res, gophermap):  # noqa
+    def handle_gophermap(self, req, res, gophermap, root):  # noqa
         # XXX: C901 McCabe complexity 11
 
         with gophermap.open("r") as f:
@@ -43,17 +43,27 @@ class CorePlugin(BasePlugin):
                     res.add_line()
                 elif line == ".":
                     # Stop Processing
-                    break
+                    return
                 elif line[0] == "#":
                     # Ignore Comments
                     continue
                 elif line[0] == "!":
                     res.add_title(line[1:])
                 elif line[0] == "=":
-                    res.add_text(execute(req, res, line[1:], cwd=str(gophermap.parent)))
+                    arg = line[1:].split(" ", 1)[0]
+                    path = resolvepath(root, arg)
+                    prog = which(arg)
+
+                    if prog is not None:
+                        res.add_text(execute(req, res, line[1:], cwd=str(gophermap.parent)))
+                    elif path.is_file():
+                        self.handle_gophermap(req, res, path, root)
+                    else:
+                        res.add_error("Resource not found!")
                 elif line == "*":
                     path = root = gophermap.parent
                     self.handle_directory(req, res, path, root)
+                    return
                 elif "\t" in line:
                     parts = line.split("\t")
                     if len(parts) < 4:
@@ -126,7 +136,7 @@ class CorePlugin(BasePlugin):
             if is_executable(gophermap):
                 self.handle_executable(req, res, gophermap)
             elif gophermap.exists():
-                self.handle_gophermap(req, res, gophermap)
+                self.handle_gophermap(req, res, gophermap, root)
             else:
                 self.handle_directory(req, res, path, root)
         elif is_executable(path):
