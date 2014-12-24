@@ -73,7 +73,7 @@ class CorePlugin(BasePlugin):
     def handle_directory(self, req, res, path, root):
         if path != root:
             type, name = "1", ".."
-            selector = "/".join(req.selector.rstrip("/").split("/")[:-1])
+            selector = "/".join(req.selector.rstrip("/").split("/")[:-1]) or "/"
             res.add_link(type, name, selector)
 
         for p in path.iterdir():
