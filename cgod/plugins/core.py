@@ -82,7 +82,7 @@ class CorePlugin(BasePlugin):
 
             type = get_type(p)
             name = p.name
-            selector = path.joinpath(p).relative_to(root)
+            selector = str(path.joinpath(p).relative_to(root))
             slash = "" if req.selector[-1] == "/" else "/"
             selector = "{}{}{}".format(req.selector, slash, selector)
 
