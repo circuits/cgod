@@ -24,7 +24,8 @@ class Gopher(Component):
         self.server = server
 
     def read(self, sock, data):
-        selector, query = data.strip().split("\t", 1) or ("/", "")
+        data = data.strip()
+        selector, query = data.split("\t", 1) if "\t" in data else (data or "/", "")
 
         req = Request(sock, self.server, selector, query)
         res = Response(req)
