@@ -51,7 +51,12 @@ class CorePlugin(BasePlugin):
                     res.add_title(line[1:])
                 elif line[0] == "=":
                     arg = line[1:].split(" ", 1)[0]
-                    path = resolvepath(root, arg)
+
+                    if arg and arg[0] == "/":
+                        path = resolvepath(root, arg)
+                    else:
+                        path = resolvepath(gophermap.parent, arg)
+
                     prog = which(arg)
 
                     if prog is not None:
