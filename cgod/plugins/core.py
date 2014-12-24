@@ -26,7 +26,7 @@ from ..gophertypes import get_type
 from ..utils import execute, is_executable, resolvepath
 
 
-IGNORE_PATTERNS = ("CSV", "*.bak", "*~", ".*")
+IGNORE_PATTERNS = ("CSV", "gophermap", "*.bak", "*~", ".*")
 
 
 class CorePlugin(BasePlugin):
@@ -51,6 +51,9 @@ class CorePlugin(BasePlugin):
                     res.add_title(line[1:])
                 elif line[0] == "=":
                     res.add_text(execute(req, res, line[1:]))
+                elif line == "*":
+                    path = root = gophermap.parent
+                    self.handle_directory(req, res, path, root)
                 elif "\t" in line:
                     parts = line.split("\t")
                     if len(parts) < 4:
