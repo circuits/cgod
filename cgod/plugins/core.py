@@ -42,6 +42,7 @@ class CorePlugin(BasePlugin):
                 if not line:
                     res.add_line()
                 elif line == ".":
+                    # Stop Processing
                     break
                 elif line[0] == "#":
                     # Ignore Comments
