@@ -1,5 +1,5 @@
 !Welcome to cgod - a circuits Gopher Daemon
 
 0README	README.md
-0Test	test.sh
-0Environment	env.sh
+1Documentation	docs
+1Samples	samples
