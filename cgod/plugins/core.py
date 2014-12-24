@@ -37,7 +37,7 @@ class CorePlugin(BasePlugin):
 
         with gophermap.open("r") as f:
             for line in f:
-                line = line.strip()
+                line = line.strip("\r\n")
 
                 if not line:
                     res.add_line()
@@ -62,9 +62,11 @@ class CorePlugin(BasePlugin):
                     type_name, selector, host, port = parts
                     type, name = type_name[0], type_name[1:]
 
-                    if type != "h" and (host is None or host == req.server.host):
+                    selector = selector or name
+
+                    if type != "h" and host in (None, req.server.host) and selector[0] != "/":
                         slash = "" if req.selector[-1] == "/" else "/"
-                        selector = "{}{}{}".format(req.selector, slash, selector)
+                        selector = "{}{}{}".format(req.selector, slash, selector or name)
 
                     res.add_link(type, name, selector, host, port)
                 else:
