@@ -75,7 +75,6 @@ class CorePlugin(BasePlugin):
             type, name = "1", ".."
             selector = Path().joinpath(*path.parts[:-1]).relative_to(root)
             slash = "" if req.selector[-1] == "/" else "/"
-            selector = "{}{}{}".format(req.selector, slash, selector)
             res.add_link(type, name, selector)
 
         for p in path.iterdir():
