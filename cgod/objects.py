@@ -17,10 +17,11 @@ from .utils import normalize
 
 class Request(object):
 
-    def __init__(self, sock, server, selector):
+    def __init__(self, sock, server, selector, query):
         self.sock = sock
         self.server = server
         self.selector = normalize(selector)
+        self.query = query
 
         try:
             self.local_addr = self.sock.getlocalname()
@@ -33,8 +34,8 @@ class Request(object):
             self.remote_addr = None, 0
 
     def __repr__(self):
-        return "<Request(host={}, port={}, selector={})>".format(
-            self.remote_addr[0], self.remote_addr[1], self.selector
+        return "<Request(host={}, port={}, selector={}, query={})>".format(
+            self.remote_addr[0], self.remote_addr[1], self.selector, self.query
         )
 
     @property
@@ -45,6 +46,7 @@ class Request(object):
             "SCRIPT_NAME": self.selector,
             "SERVER_HOST": self.server.host,
             "SERVER_PORT": str(self.server.port),
+            "QUERY_STRING": self.query,
             "CHARSET": self.server.encoding,
             "DOCUMENT_ROOT": str(self.server.rootdir),
 

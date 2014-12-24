@@ -118,7 +118,7 @@ class CorePlugin(BasePlugin):
             path = resolvepath(root, req.selector)
 
         if not path.exists():
-            res.error = "Resource not found!"
+            res.add_error("Resource not found!")
         elif path.is_dir():
             gophermap = path.joinpath("gophermap")
 
