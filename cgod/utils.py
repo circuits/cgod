@@ -14,9 +14,10 @@ from subprocess import check_output
 EXEC_MASK = stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH
 
 
-def execute(req, res, *args):
+def execute(req, res, *args, **kwargs):
+    kwargs.update(env=req.environ, shell=True)
     try:
-        return check_output(*args, env=req.environ, shell=True)
+        return check_output(*args, **kwargs)
     except Exception as error:
         return "ERROR: {}".format(error)
 

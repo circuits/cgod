@@ -50,7 +50,7 @@ class CorePlugin(BasePlugin):
                 elif line[0] == "!":
                     res.add_title(line[1:])
                 elif line[0] == "=":
-                    res.add_text(execute(req, res, line[1:]))
+                    res.add_text(execute(req, res, line[1:], cwd=str(gophermap.parent)))
                 elif line == "*":
                     path = root = gophermap.parent
                     self.handle_directory(req, res, path, root)
@@ -98,7 +98,7 @@ class CorePlugin(BasePlugin):
 
     def handle_executable(self, req, res, path):
         res.stream = True
-        self.fire(task(execute, req, res, str(path)), "workers")
+        self.fire(task(execute, req, res, str(path), cwd=str(path.parent)), "workers")
 
     @handler("task_success", channel="workers")
     def on_task_success(self, evt, val):
