@@ -13,7 +13,7 @@ from fnmatch import fnmatch
 from mimetypes import add_type, guess_type
 
 
-DEFAULT_TYPE = "9"
+DEFAULT_TYPE = "0"
 
 EXTRA_MIME_TYPES = (
     ("text/x-markdown", ".md"),
