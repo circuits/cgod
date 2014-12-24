@@ -90,6 +90,13 @@ class Response(object):
     def stream(self, stream):
         self._stream = stream
 
+    def add(self, line):
+        """
+        Adds a line (RAW).
+        """
+
+        self._lines.append(line)
+
     def add_text(self, text, width=67):
         """
         Adds a line of text by formatting it as a gopher selector and

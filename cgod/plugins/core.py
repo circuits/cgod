@@ -10,6 +10,7 @@ __version__ = "0.0.1"
 __author__ = "James Mills, prologic at shortcircuit dot net dot au"
 
 
+import stat
 from uuid import uuid4 as uuid
 from subprocess import check_output
 
@@ -17,7 +18,8 @@ from subprocess import check_output
 from pathlib import Path
 
 from circuits.io import File
-from circuits import handler
+from circuits import handler, task
+from circuits.net.events import close, write
 
 
 from ..events import response
@@ -28,18 +30,24 @@ from ..gophertypes import get_type
 
 IGNORE_PATTERNS = ("CSV", "*.bak", "*~", ".*")
 
+EXEC_MASK = stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH
 
-def execute(req, *args):
+
+def execute(req, res, *args):
     try:
         return check_output(*args, env=req.environ, shell=True)
     except Exception as error:
         return "ERROR: {}".format(error)
 
 
+def is_executable(path):
+    return path.stat().st_mode & EXEC_MASK
+
+
 class CorePlugin(BasePlugin):
     """Core Plugin"""
 
-    def process_gophermap(self, req, res, gophermap):  # noqa
+    def handle_gophermap(self, req, res, gophermap):  # noqa
         # XXX: C901 McCabe complexity 11
 
         with gophermap.open("r") as f:
@@ -56,7 +64,7 @@ class CorePlugin(BasePlugin):
                 elif line[0] == "!":
                     res.add_title(line[1:])
                 elif line[0] == "=":
-                    res.add_text(execute(req, line[1:]))
+                    res.add_text(execute(req, res, line[1:]))
                 elif "\t" in line:
                     parts = line.split("\t")
                     if len(parts) < 4:
@@ -74,10 +82,6 @@ class CorePlugin(BasePlugin):
                     res.add_text(line)
 
     def handle_directory(self, req, res, path, root):
-        gophermap = path.joinpath("gophermap")
-        if gophermap.exists():
-            return self.process_gophermap(req, res, gophermap)
-
         if path != root:
             type, name = "1", ".."
             selector = Path().joinpath(*path.parts[:-1]).relative_to(root)
@@ -104,6 +108,16 @@ class CorePlugin(BasePlugin):
         filename = str(path)
         self.server.streams[channel] = (req, File(filename, channel=channel).register(self))
 
+    def handle_executable(self, req, res, path):
+        res.stream = True
+        self.fire(task(execute, req, res, str(path)), "workers")
+
+    @handler("task_success", channel="workers")
+    def on_task_success(self, evt, val):
+        fn, req, res, path = evt.args
+        self.fire(write(req.sock, val))
+        self.fire(close(req.sock))
+
     @handler("request")
     def on_request(self, event, req, res):
         parts = req.selector.split("/")
@@ -117,8 +131,17 @@ class CorePlugin(BasePlugin):
 
         if not path.exists():
             res.error = "Resource not found!"
-        elif path.resolve().is_dir():
-            self.handle_directory(req, res, path, root)
+        elif path.is_dir():
+            gophermap = path.joinpath("gophermap")
+
+            if is_executable(gophermap):
+                self.handle_executable(req, res, gophermap)
+            elif gophermap.exists():
+                self.handle_gophermap(req, res, gophermap)
+            else:
+                self.handle_directory(req, res, path, root)
+        elif is_executable(path):
+            self.handle_executable(req, res, path)
         else:
             self.handle_file(req, res, path)
 
