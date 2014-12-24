@@ -59,7 +59,7 @@ class CorePlugin(BasePlugin):
                     type_name, selector, host, port = parts
                     type, name = type_name[0], type_name[1:]
 
-                    if host is None or host == req.server.host:
+                    if type != "h" and (host is None or host == req.server.host):
                         slash = "" if req.selector[-1] == "/" else "/"
                         selector = "{}{}{}".format(req.selector, slash, selector)
 
