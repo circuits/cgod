@@ -1,0 +1,3 @@
+#!/bin/bash
+
+echo -e "iYour query was: $QUERY_STRING\t\tnull.host\t0\r\n"
