@@ -10,9 +10,7 @@ __version__ = "0.0.1"
 __author__ = "James Mills, prologic at shortcircuit dot net dot au"
 
 
-import stat
 from uuid import uuid4 as uuid
-from subprocess import check_output
 
 
 from pathlib import Path
@@ -24,24 +22,11 @@ from circuits.net.events import close, write
 
 from ..events import response
 from ..plugin import BasePlugin
-from ..utils import resolvepath
 from ..gophertypes import get_type
+from ..utils import execute, is_executable, resolvepath
 
 
 IGNORE_PATTERNS = ("CSV", "*.bak", "*~", ".*")
-
-EXEC_MASK = stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH
-
-
-def execute(req, res, *args):
-    try:
-        return check_output(*args, env=req.environ, shell=True)
-    except Exception as error:
-        return "ERROR: {}".format(error)
-
-
-def is_executable(path):
-    return path.stat().st_mode & EXEC_MASK
 
 
 class CorePlugin(BasePlugin):

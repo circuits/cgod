@@ -6,7 +6,23 @@
 """Utilities Module"""
 
 
+import stat
 from re import sub
+from subprocess import check_output
+
+
+EXEC_MASK = stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH
+
+
+def execute(req, res, *args):
+    try:
+        return check_output(*args, env=req.environ, shell=True)
+    except Exception as error:
+        return "ERROR: {}".format(error)
+
+
+def is_executable(path):
+    return path.stat().st_mode & EXEC_MASK
 
 
 def normalize(path):
