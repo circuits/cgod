@@ -22,7 +22,7 @@ def execute(req, res, *args):
 
 
 def is_executable(path):
-    return path.stat().st_mode & EXEC_MASK
+    return path.stat().st_mode & EXEC_MASK if path.exists() else False
 
 
 def normalize(path):
