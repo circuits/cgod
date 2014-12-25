@@ -12,6 +12,9 @@ from re import sub
 from subprocess import check_output
 
 
+from funcy import ignore
+
+
 EXEC_MASK = stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH
 
 
@@ -23,8 +26,27 @@ def execute(req, res, *args, **kwargs):
         return "ERROR: {}".format(error)
 
 
+@ignore(OSError, False)
+def is_dir(path):
+    return path.is_dir()
+
+
+@ignore(OSError, False)
 def is_executable(path):
     return path.stat().st_mode & EXEC_MASK if path.exists() else False
+
+
+@ignore(OSError, False)
+def is_file(path):
+    return path.is_file()
+
+
+def iterdir(path):
+    try:
+        for p in path.iterdir():
+            yield p
+    except OSError:
+        return
 
 
 def normalize(path):

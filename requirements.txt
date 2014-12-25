@@ -1,3 +1,4 @@
+funcy
 bidict
 cidict
 pathlib

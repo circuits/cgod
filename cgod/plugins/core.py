@@ -23,7 +23,7 @@ from circuits.net.events import close, write
 from ..events import response
 from ..plugin import BasePlugin
 from ..gophertypes import get_type
-from ..utils import execute, is_executable, resolvepath, which
+from ..utils import execute, is_dir, is_executable, is_file, iterdir, resolvepath, which
 
 
 IGNORE_PATTERNS = ("CSV", "gophermap", "*.bak", "*~", ".*")
@@ -61,7 +61,7 @@ class CorePlugin(BasePlugin):
 
                     if prog is not None:
                         res.add_text(execute(req, res, line[1:], cwd=str(gophermap.parent)))
-                    elif path.is_file():
+                    elif is_file(path):
                         self.handle_gophermap(req, res, path, root)
                     else:
                         res.add_error("Resource not found!")
@@ -93,7 +93,7 @@ class CorePlugin(BasePlugin):
             selector = "/".join(req.selector.rstrip("/").split("/")[:-1]) or "/"
             res.add_link(type, name, selector)
 
-        for p in path.iterdir():
+        for p in iterdir(path):
             if any((p.match(pattern) for pattern in IGNORE_PATTERNS)):
                 continue
 
@@ -135,12 +135,12 @@ class CorePlugin(BasePlugin):
 
         if not path.exists():
             res.add_error("Resource not found!")
-        elif path.is_dir():
+        elif is_dir(path):
             gophermap = path.joinpath("gophermap")
 
             if is_executable(gophermap):
                 self.handle_executable(req, res, gophermap)
-            elif gophermap.exists():
+            elif is_file(gophermap):
                 self.handle_gophermap(req, res, gophermap, root)
             else:
                 self.handle_directory(req, res, path, root)
