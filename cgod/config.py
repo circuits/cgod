@@ -117,7 +117,21 @@ class Config(reprconf.Config):
         )
 
         add(
-            "-u", "--userdir",
+            "-u", "--user",
+            action="store", type=str,
+            default="nobody", dest="user",
+            help="Set user to drop privileges to"
+        )
+
+        add(
+            "-g", "--group",
+            action="store", type=str,
+            default="nobody", dest="group",
+            help="Set group to drop privileges to"
+        )
+
+        add(
+            "-U", "--userdir",
             action="store", type=str,
             default="gopher", dest="userdir",
             help="Set user directory"
