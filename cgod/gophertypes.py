@@ -19,9 +19,18 @@ DEFAULT_TYPE = "9"
 
 TYPE_MAP = (
     ("text/html", "h",),
-    ("image/gif", "g",),
     ("text/*", "0"),
+
+    ("image/gif", "g",),
     ("image/*", "I"),
+
+    ("application/x-tar", "5"),
+    ("application/x-gtar", "5"),
+
+    ("application/x-xz", "5"),
+    ("application/x-zip", "5"),
+    ("application/x-gzip", "5"),
+    ("application/x-bzip2", "5"),
 )
 
 
