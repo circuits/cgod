@@ -25,7 +25,7 @@ from ..gophertypes import get_type
 from ..utils import execute, is_dir, is_executable, is_file, iterdir, resolvepath, which
 
 
-IGNORE_PATTERNS = ("CSV", "gophermap", "*.bak", "*~", ".*")
+IGNORE_PATTERNS = ["CSV", "gophermap", "*.bak", "*~", ".*"]
 
 
 class CorePlugin(BasePlugin):
@@ -87,13 +87,21 @@ class CorePlugin(BasePlugin):
                     res.add_text(line)
 
     def handle_directory(self, req, res, path, root):
+        ignore_patterns = IGNORE_PATTERNS[:]
+
+        gopherignore = path.joinpath(".gopherignore")
+        if is_file(gopherignore):
+            with gopherignore.open("r") as f:
+                for line in f:
+                    ignore_patterns.append(line.strip())
+
         if path != root:
             type, name = "1", ".."
             selector = "/".join(req.selector.rstrip("/").split("/")[:-1]) or "/"
             res.add_link(type, name, selector)
 
         for p in iterdir(path):
-            if any((p.match(pattern) for pattern in IGNORE_PATTERNS)):
+            if any((p.match(pattern) for pattern in ignore_patterns)):
                 continue
 
             type = get_type(p)
