@@ -5,7 +5,7 @@ cgod is a Gopher Daemon with a similar feature set to [Gophernicus](gopher://gop
 
 Full documentation can be found on Gopherspace at:
 
-<gopher://arrow.shortcircuit.net.au/1~prologic/projects/cgod/>
+<gopher://arrow.shortcircuit.net.au/1/~prologic/projects/cgod/>
 
 Installation
 ------------
