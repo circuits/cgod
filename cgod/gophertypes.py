@@ -10,16 +10,12 @@ Implements support for translating common mimtypes to gophertypes
 
 
 from fnmatch import fnmatch
-from mimetypes import add_type, guess_type
+
+
+import magic
 
 
 DEFAULT_TYPE = "9"
-
-EXTRA_MIME_TYPES = (
-    ("text/x-markdown", ".md"),
-    ("text/x-rst", ".rst"),
-    ("text/x-yaml", ".yml"),
-)
 
 TYPE_MAP = (
     ("text/html", "h",),
@@ -29,15 +25,12 @@ TYPE_MAP = (
 )
 
 
-for ext, mimetype in EXTRA_MIME_TYPES:
-    add_type(ext, mimetype)
-
-
 def get_type(path):
     if path.is_dir() or path.is_symlink():
         return "1"
 
-    mimetype, encoding = guess_type(path.name)
+    mimetype = magic.from_file(str(path), mime=True)
+
     if mimetype is None:
         return DEFAULT_TYPE
 

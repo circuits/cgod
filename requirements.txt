@@ -4,3 +4,4 @@ pathlib
 pymills
 procname
 circuits
+python-magic

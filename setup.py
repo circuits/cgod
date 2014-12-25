@@ -42,6 +42,7 @@ setup(
         "pymills",
         "procname",
         "circuits",
+        "python-magic",
     ],
     entry_points={
         "console_scripts": [
