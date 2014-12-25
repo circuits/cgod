@@ -75,10 +75,6 @@ class Server(Component):
             "I: [{0:s}:{1:d}] {2:s}".format(host, port, repr(data))
         )
 
-        from os import environ
-        from pprint import pprint
-        pprint(environ)
-
     def write(self, sock, data):
         try:
             host, port = sock.getpeername()
