@@ -60,7 +60,10 @@ def main():
 
     Core(config).register(manager)
 
-    manager.run()
+    try:
+        manager.run()
+    finally:
+        config.save()
 
 
 if __name__ == "__main__":
