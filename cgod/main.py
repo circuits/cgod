@@ -9,13 +9,17 @@ Main entry point responsible for configuring and starting the application.
 """
 
 
+import sys
 import logging
 from os import chdir
+from os.path import basename
 from logging import getLogger
 
 
 from circuits.app import Daemon
 from circuits import Debugger, Manager, Worker
+
+from procname import setprocname
 
 
 from .core import Core
@@ -33,6 +37,8 @@ def setup_logging(config):
 
 
 def main():
+    setprocname(basename(sys.argv[0]))
+
     config = Config()
 
     chdir(config["rootdir"])

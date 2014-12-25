@@ -40,6 +40,7 @@ setup(
         "cidict",
         "pathlib",
         "pymills",
+        "procname",
         "circuits",
     ],
     entry_points={

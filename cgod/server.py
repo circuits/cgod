@@ -8,13 +8,15 @@
 Main Listening Server Component
 """
 
-
+import os
+import pwd
+import grp
 from logging import getLogger
 
 
-from circuits import handler, Component
 from circuits.net.sockets import TCPServer
 from circuits.net.events import close, write
+from circuits import handler, BaseComponent, Component
 
 from pathlib import Path
 from bidict import bidict
@@ -22,6 +24,39 @@ from bidict import bidict
 
 from .protocol import Gopher
 from .version import version
+
+
+class DropPrivileges(BaseComponent):
+
+    channel = "server"
+
+    def init(self, user="nobody", group="nobody", channel=channel):
+        self.user = user
+        self.group = group
+
+    def drop_privileges(self):
+        if os.getuid() != 0:
+            # Running as non-root. Ignore.
+            return
+
+        # Get the uid/gid from the name
+        uid = pwd.getpwnam(self.user).pw_uid
+        gid = grp.getgrnam(self.group).gr_gid
+
+        # Remove group privileges
+        os.setgroups([])
+
+        # Try setting the new uid/gid
+        os.setgid(gid)
+        os.setuid(uid)
+
+        # Ensure a very conservative umask
+        os.umask(077)
+
+    @handler("ready", channel="*")
+    def on_ready(self, server, bind):
+        self.drop_privileges()
+        self.unregister()
 
 
 class Server(Component):
@@ -51,6 +86,8 @@ class Server(Component):
         self.port = port
 
         self.streams = bidict()
+
+        DropPrivileges(self.config["user"], self.config["group"]).register(self)
 
         self.transport = TCPServer(
             self.bind, channel=self.channel
