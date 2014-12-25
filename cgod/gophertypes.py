@@ -18,11 +18,13 @@ import magic
 DEFAULT_TYPE = "9"
 
 TYPE_MAP = (
-    ("text/html", "h",),
+    ("text/html", "h"),
     ("text/*", "0"),
 
-    ("image/gif", "g",),
+    ("image/gif", "g"),
     ("image/*", "I"),
+
+    ("audio/*", "s"),
 
     ("application/x-tar", "5"),
     ("application/x-gtar", "5"),
