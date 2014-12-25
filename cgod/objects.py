@@ -9,10 +9,16 @@ Implements core objects used to store data
 """
 
 
+from os import geteuid
+from pwd import getpwuid
 from textwrap import fill
 
 
 from .utils import normalize
+from . import __name__, __version__
+
+
+VERSION = "{} {}".format(__name__, __version__)
 
 
 class Request(object):
@@ -41,11 +47,13 @@ class Request(object):
     @property
     def environ(self):
         return {
+            "USER": getpwuid(geteuid()).pw_name,
             "REMOTE_ADDR": self.remote_addr[0],
             "LOCAL_ADDR": self.local_addr[0],
             "SCRIPT_NAME": self.selector,
             "SERVER_HOST": self.server.host,
             "SERVER_PORT": str(self.server.port),
+            "SERVER_VERSION": VERSION,
             "QUERY_STRING": self.query,
             "CHARSET": self.server.encoding,
             "DOCUMENT_ROOT": str(self.server.rootdir),
