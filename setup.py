@@ -36,6 +36,7 @@ setup(
     platforms="POSIX",
     packages=find_packages("."),
     install_requires=[
+        "funcy",
         "bidict",
         "cidict",
         "pathlib",
