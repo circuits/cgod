@@ -5,24 +5,24 @@
 ##
 
 Creating a file called "gophermap" into a directory disables the
-normal resource listing and replaces it with the contents of the map
-file. You can also have inline gophermaps - files with a ".gophermap"
-extension are parsed as gophermaps and displayed in between normal
-resources in alphabetical order.
+normal resource listing and replaces it with the contents
+of the map file. You can also have inline gophermaps - files
+with a ".gophermap" extension are parsed as gophermaps and
+displayed in between normal resources in alphabetical order.
 
 In a gophermap any line that doesn't contain a <TAB> character is 
 automatically converted to an type "i" gopher resource which are
-displayed as plain text in the client. Lines which contain tabs are
-intepreted as gopher resource lines which the client will render as
-links. The first line of a gophermap should be a !Title line
-describing the menu.
+displayed as plain text in the client. Lines which contain tabs
+are intepreted as gopher resource lines which the client will
+render as links. The first line of a gophermap should be a !Title
+line describing the menu.
 
-Dynamic gophermaps are possible by making the gophermap a script and
-marking it as executable. All script output is parsed just like a
-static gophermap, for example lines without tabs are converted to "i"
-resources. Executable gophermaps are always ran through the default
-shell (/bin/sh) so depending on your operating system that's either
-slow, or really unbearably slow...
+Dynamic gophermaps are possible by making the gophermap a script
+and marking it as executable. All script output is parsed just
+like a static gophermap, for example lines without tabs are
+converted to "i" resources. Executable gophermaps are always ran
+through the default shell (/bin/sh) so depending on your operating
+system that's either slow, or really unbearably slow...
 
 The format of a gophermap resource line is simple:
 
@@ -37,8 +37,8 @@ Where:
 
 Type and name are mandatory. If you don't specify a selector, the
 name field will be also used as the selector. If you don't specify
-host or port the host and port of the current server are used instead.
-Also make sure to use ONLY ONE TAB between the fields.
+host or port the host and port of the current server are used
+instead.  Also make sure to use ONLY ONE TAB between the fields.
 
 Valid filetypes include:
    0   text file
@@ -62,7 +62,7 @@ Additional type characters supported by cgod:
    #          comment - rest of the line is ignored
    !title     menu title (use on the first line)
    -file      hide the file from listings
-   ~          include a list of users with valid a ~/gopher directory
+   ~          include a list of users with valid a ~/gopher
    =mapfile   include or execute other gophermap 
    *          stop processing gophermap, include file listing
    .          stop processing gophermap (default)

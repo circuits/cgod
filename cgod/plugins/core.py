@@ -154,4 +154,9 @@ class CorePlugin(BasePlugin):
         elif is_executable(path):
             self.handle_executable(req, res, path)
         else:
-            self.handle_file(req, res, path)
+            gophermap = path.with_suffix(".gophermap")
+
+            if is_file(gophermap):
+                self.handle_gophermap(req, res, gophermap, root)
+            else:
+                self.handle_file(req, res, path)

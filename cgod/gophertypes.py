@@ -15,6 +15,9 @@ from fnmatch import fnmatch
 import magic
 
 
+from .utils import is_dir
+
+
 DEFAULT_TYPE = "9"
 
 TYPE_MAP = (
@@ -37,7 +40,7 @@ TYPE_MAP = (
 
 
 def get_type(path):
-    if path.is_dir() or path.is_symlink():
+    if is_dir(path) or path.suffix == ".gophermap":
         return "1"
 
     mimetype = magic.from_file(str(path), mime=True)
