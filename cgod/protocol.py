@@ -12,7 +12,7 @@ Implements the Gopher Protocol and handles the parsing of requests.
 from circuits import Component
 
 
-from .events import request
+from .events import request, response
 from .objects import Request, Response
 
 
@@ -31,3 +31,7 @@ class Gopher(Component):
         res = Response(req)
 
         self.fire(request(req, res))
+
+    def request_complete(self, event, evt, val):
+        req, res = evt.args
+        self.fire(response(res))
