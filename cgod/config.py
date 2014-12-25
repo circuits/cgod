@@ -165,14 +165,14 @@ class Config(reprconf.Config):
             if option not in self and value is not None:
                 self[option] = value
 
-    def reload_config(self):
+    def reload(self):
         filename = self.get("config")
         if filename is not None:
             config = reprconf.as_dict(filename)
             config.pop("global", None)
             self.update(config)
 
-    def save_config(self, filename=None):
+    def save(self, filename=None):
         if filename is None:
             filename = self.get("config", "cgod.ini")
 
