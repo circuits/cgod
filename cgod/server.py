@@ -24,6 +24,7 @@ from bidict import bidict
 
 from .protocol import Gopher
 from .version import version
+from .dispatcher import Dispatcher
 
 
 class DropPrivileges(BaseComponent):
@@ -94,6 +95,7 @@ class Server(Component):
         ).register(self)
 
         self.protocol = Gopher(self).register(self)
+        self.dispatcher = Dispatcher().register(self)
 
     def ready(self, server, bind):
         self.logger.info(

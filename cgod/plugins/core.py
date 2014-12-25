@@ -20,7 +20,6 @@ from circuits import handler, task
 from circuits.net.events import close, write
 
 
-from ..events import response
 from ..plugin import BasePlugin
 from ..gophertypes import get_type
 from ..utils import execute, is_dir, is_executable, is_file, iterdir, resolvepath, which
@@ -148,8 +147,3 @@ class CorePlugin(BasePlugin):
             self.handle_executable(req, res, path)
         else:
             self.handle_file(req, res, path)
-
-    @handler("request_complete")
-    def on_request_complete(self, event, evt, val):
-        req, res = evt.args
-        self.fire(response(res))

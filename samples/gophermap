@@ -26,6 +26,9 @@ Include sub-gophermap:
 Execute script and parse output as subgophermap:
 =/usr/bin/uptime
 
+Access an internal resource:
+1hello	../hello
+
 Here we stop processing the gophermap and include the regular menu:
 *
 
