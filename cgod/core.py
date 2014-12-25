@@ -8,9 +8,6 @@
 Crates server component, load plugins and handles process signals.
 """
 
-import os
-import pwd
-import grp
 from logging import getLogger
 from signal import SIGINT, SIGHUP, SIGTERM
 
@@ -22,36 +19,6 @@ from .server import Server
 from .plugins import Plugins
 
 
-class DropPrivileges(BaseComponent):
-
-    def init(self, user="nobody", group="nobody"):
-        self.user = user
-        self.group = group
-
-    def drop_privileges(self):
-        if os.getuid() != 0:
-            # Running as non-root. Ignore.
-            return
-
-        # Get the uid/gid from the name
-        uid = pwd.getpwnam(self.user).pw_uid
-        gid = grp.getgrnam(self.group).gr_gid
-
-        # Remove group privileges
-        os.setgroups([])
-
-        # Try setting the new uid/gid
-        os.setgid(gid)
-        os.setuid(uid)
-
-        # Ensure a very conservative umask
-        os.umask(077)
-
-    @handler("ready", channel="*")
-    def on_ready(self, server, bind):
-        self.drop_privileges()
-
-
 class Core(BaseComponent):
 
     channel = "core"
@@ -60,8 +27,6 @@ class Core(BaseComponent):
         self.config = config
 
         self.logger = getLogger(__name__)
-
-        DropPrivileges(self.config["user"], self.config["group"]).register(self)
 
         self.server = Server(self.config).register(self)
 
