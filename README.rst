@@ -15,7 +15,7 @@ Application Framework.
 
 Full documentation can be found on Gopherspace at:
 
-gopher://arrow.shortcircuit.net.au/1~prologic/projects/cgod/
+gopher://arrow.shortcircuit.net.au/1/~prologic/projects/cgod/
 
 
 Installation
