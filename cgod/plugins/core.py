@@ -22,7 +22,7 @@ from circuits.net.events import close, write
 
 from ..plugin import BasePlugin
 from ..gophertypes import get_type
-from ..utils import execute, is_dir, is_executable, is_file, iterdir, resolvepath, which
+from ..utils import execute, exists, is_dir, is_executable, is_file, iterdir, resolvepath, which
 
 
 IGNORE_PATTERNS = ["CSV", "gophermap", "*.bak", "*~", ".*"]
@@ -140,7 +140,7 @@ class CorePlugin(BasePlugin):
             root = self.server.rootdir
             path = resolvepath(root, req.selector)
 
-        if not path.exists():
+        if not exists(path):
             res.add_error("Resource not found!")
         elif is_dir(path):
             gophermap = path.joinpath("gophermap")
