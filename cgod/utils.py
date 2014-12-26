@@ -27,6 +27,11 @@ def execute(req, res, *args, **kwargs):
 
 
 @ignore(OSError, False)
+def exists(path):
+    return path.exists
+
+
+@ignore(OSError, False)
 def is_dir(path):
     return path.is_dir()
 
