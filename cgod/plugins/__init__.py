@@ -24,7 +24,7 @@ from cidict import cidict
 from ..plugin import BasePlugin
 
 
-DEFAULTS = ["core", "hello"]
+DEFAULTS = ["caps", "core", "hello"]
 
 
 def is_plugin(obj):

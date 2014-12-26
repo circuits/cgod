@@ -123,6 +123,16 @@ class CorePlugin(BasePlugin):
         res.stream = True
         self.fire(task(execute, req, res, str(path), cwd=str(path.parent)), "workers")
 
+    @handler("caps")
+    def on_caps(self, caps):
+        # XXX: Make this depend on the environment
+
+        caps.add("PathDelimeter", "/")
+        caps.add("PathIdentity", ".")
+        caps.add("PathParent", "..")
+        caps.add("PathParentDouble", "FALSE")
+        caps.add("PathKeepPreDelimeter", "FALSE")
+
     @handler("task_success", channel="workers")
     def on_task_success(self, evt, val):
         fn, req, res, path = evt.args
