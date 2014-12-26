@@ -76,7 +76,7 @@ class Response(object):
         return "<Response(bytes={}, stream={})>".format(len(self), self.stream)
 
     def __str__(self):
-        return "{}\r\n.".format("\r\n".join(self._lines)) if not self.error else self.error
+        return "{}\r\n.".format("\r\n".join(self._lines))
 
     def __bytes__(self):
         return str(self).encode(self.req.server.encoding)
