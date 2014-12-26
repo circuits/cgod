@@ -9,6 +9,7 @@
 import os
 import stat
 from re import sub
+from operator import itemgetter
 from subprocess import check_output
 
 
@@ -48,8 +49,9 @@ def is_file(path):
 
 def iterdir(path):
     try:
-        for p in path.iterdir():
-            yield p
+        tmp = [(not p.is_dir(), p) for p in path.iterdir()]
+        tmp.sort()
+        return map(itemgetter(1), tmp)
     except OSError:
         return
 
