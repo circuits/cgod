@@ -10,6 +10,9 @@ should subclass BasePlugin to be properly registered as plugins.
 """
 
 
+from logging import getLogger
+
+
 from circuits import BaseComponent
 
 
@@ -20,3 +23,4 @@ class BasePlugin(BaseComponent):
     def init(self, server, config):
         self.server = server
         self.config = config
+        self.logger = getLogger(__name__)
