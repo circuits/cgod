@@ -6,9 +6,6 @@
 """Plugins Package"""
 
 
-from __future__ import print_function
-
-
 import sys
 from logging import getLogger
 from traceback import format_exc
