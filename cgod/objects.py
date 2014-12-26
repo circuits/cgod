@@ -66,7 +66,6 @@ class Response(object):
     def __init__(self, req):
         self.req = req
 
-        self._error = ""
         self._lines = []
         self._stream = False
 
@@ -83,14 +82,6 @@ class Response(object):
 
     def __bytes__(self):
         return str(self).encode(self.req.server.encoding)
-
-    @property
-    def error(self):
-        return self._error
-
-    @error.setter
-    def error(self, error):
-        self._error = error
 
     @property
     def stream(self):
