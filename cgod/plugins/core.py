@@ -11,6 +11,7 @@ __author__ = "James Mills, prologic at shortcircuit dot net dot au"
 
 
 from uuid import uuid4 as uuid
+from tempfile import NamedTemporaryFile
 
 
 from pathlib import Path
@@ -58,8 +59,11 @@ class CorePlugin(BasePlugin):
 
                     prog = which(arg)
 
-                    if prog is not None:
-                        res.add_text(execute(req, res, line[1:], cwd=str(gophermap.parent)))
+                    if prog is not None or is_executable(path):
+                        with NamedTemporaryFile() as f:
+                            f.write(execute(req, res, line[1:], cwd=str(gophermap.parent)))
+                            f.seek(0)
+                            self.handle_gophermap(req, res, Path(f.name), root)
                     elif is_file(path):
                         self.handle_gophermap(req, res, path, root)
                     else:
