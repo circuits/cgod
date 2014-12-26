@@ -18,7 +18,7 @@ from ..decorators import selector
 
 
 class HelloPlugin(BasePlugin):
-    """HelloCore Plugin"""
+    """Hello Plugin"""
 
     @selector("/hello")
     def on_hello(self, event, req, res):
