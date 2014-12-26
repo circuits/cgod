@@ -73,9 +73,7 @@ class Response(object):
         return sum(map(len, self._lines))
 
     def __repr__(self):
-        return "<Response(bytes={}, error={}, stream={})>".format(
-            len(self), repr(self.error), self.stream
-        )
+        return "<Response(bytes={}, stream={})>".format(len(self), self.stream)
 
     def __str__(self):
         return "{}\r\n.".format("\r\n".join(self._lines)) if not self.error else self.error
