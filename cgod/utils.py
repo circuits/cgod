@@ -28,7 +28,7 @@ def execute(req, res, *args, **kwargs):
 
 @ignore(OSError, False)
 def exists(path):
-    return path.exists
+    return path.exists()
 
 
 @ignore(OSError, False)
