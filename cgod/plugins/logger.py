@@ -27,7 +27,7 @@ class LoggerPlugin(BasePlugin):
         res = evt.args[0]
         req = res.req
 
-        logline = "{} - {}{}\n".format(
+        logline = "{} - {}{}".format(
             req.remote_addr[0], req.selector,
             "?{}".format(req.query) if req.query else ""
         )
