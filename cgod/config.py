@@ -174,7 +174,7 @@ class Config(reprconf.Config):
 
     def save(self, filename=None):
         if filename is None:
-            filename = self.get("config", "cgod.ini")
+            return
 
         parser = ConfigParser()
         parser.add_section("globals")
