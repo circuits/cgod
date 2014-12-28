@@ -116,7 +116,7 @@ class Response(object):
 
         string = fill(text, width)
         for line in string.split("\n"):
-            self._lines.append("3{}\t\tnull.host\t0".format(line))
+            self._lines.append("3{}\t\terror.host\t0".format(line))
 
     def add_link(self, type, text, path, host=None, port=None):
         """
