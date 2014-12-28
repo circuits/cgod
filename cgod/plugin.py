@@ -23,4 +23,9 @@ class BasePlugin(BaseComponent):
     def init(self, server, config):
         self.server = server
         self.config = config
-        self.logger = getLogger(__name__)
+        self.logger = getLogger(
+            "{}.{}".format(
+                self.__class__.__module__,
+                self.__class__.__name__
+            )
+        )
