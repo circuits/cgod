@@ -11,8 +11,8 @@ import sys
 import stat
 from re import sub
 from operator import itemgetter
-from subprocess import check_output
 from traceback import format_exception
+from subprocess import Popen, PIPE, STDOUT
 
 
 from funcy import ignore
@@ -30,10 +30,12 @@ def format_error():
 
 
 def execute(req, res, args, **kwargs):
-    kwargs.update(env=req.environ, shell=True)
+    kwargs.update(env=req.environ, stderr=STDOUT, stdout=PIPE, shell=True)
 
     try:
-        return check_output(args, **kwargs)
+        p = Popen(args, **kwargs)
+        stdout, _ = p.communicate()
+        return stdout
     except:
         return format_error()
 
