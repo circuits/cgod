@@ -43,13 +43,14 @@ class Request(object):
     def environ(self):
         return {
             "USER": getpwuid(geteuid()).pw_name,
-            "REMOTE_ADDR": self.remote_addr[0],
-            "LOCAL_ADDR": self.local_addr[0],
+            "PEER": self.remote_addr[0],
+            "SELECTOR": self.selector,
+            "QUERY": self.query,
+            # XXX: Make SCRIPT_NAME actually point to the "executing" CGI.
             "SCRIPT_NAME": self.selector,
             "SERVER_HOST": self.server.host,
             "SERVER_PORT": str(self.server.port),
             "SERVER_VERSION": VERSION,
-            "QUERY_STRING": self.query,
             "CHARSET": self.server.encoding,
             "DOCUMENT_ROOT": str(self.server.rootdir),
 
