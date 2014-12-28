@@ -32,7 +32,7 @@ class Request(object):
         try:
             self.remote_addr = self.sock.getpeername()
         except:
-            self.remote_addr = None, 0
+            self.remote_addr = "169.254.0.1", 0
 
     def __repr__(self):
         return "<Request(host={}, port={}, selector={}, query={})>".format(
