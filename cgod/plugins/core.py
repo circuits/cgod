@@ -40,6 +40,8 @@ class CorePlugin(BasePlugin):
     def handle_gophermap(self, req, res, gophermap):  # noqa
         # XXX: C901 McCabe complexity 11
 
+        ignore = []
+
         with gophermap.open("r") as f:
             for line in f:
                 line = line.strip("\r\n")
@@ -73,9 +75,11 @@ class CorePlugin(BasePlugin):
                         self.handle_gophermap(req, res, path)
                     else:
                         res.add_error("Resource not found!")
+                elif line[0] == "-":
+                    ignore.append(line[1:])
                 elif line == "*":
                     path = gophermap.parent
-                    self.handle_directory(req, res, path)
+                    self.handle_directory(req, res, path, ignore=ignore)
                     return
                 elif line[0] == "3":
                     parts = line.split("\t")
@@ -98,8 +102,10 @@ class CorePlugin(BasePlugin):
                 else:
                     res.add_text(line)
 
-    def handle_directory(self, req, res, path):
+    def handle_directory(self, req, res, path, ignore=None):
         ignore_patterns = IGNORE_PATTERNS[:]
+        if ignore is not None:
+            ignore_patterns += ignore
 
         gopherignore = path.joinpath(".gopherignore")
         if is_file(gopherignore):
