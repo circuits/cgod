@@ -30,11 +30,6 @@ class Request(object):
         self.query = query
 
         try:
-            self.local_addr = self.sock.getlocalname()
-        except:
-            self.local_addr = self.server.bind
-
-        try:
             self.remote_addr = self.sock.getpeername()
         except:
             self.remote_addr = None, 0
