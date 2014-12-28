@@ -32,7 +32,12 @@ IGNORE_PATTERNS = ["CSV", "gophermap", "*.bak", "*~", ".*"]
 class CorePlugin(BasePlugin):
     """Core Plugin"""
 
-    def handle_gophermap(self, req, res, gophermap, root):  # noqa
+    def init(self, server, config):
+        super(CorePlugin, self).init(server, config)
+
+        self.rootdir = self.config.get("rootdir", Path.cwd())
+
+    def handle_gophermap(self, req, res, gophermap):  # noqa
         # XXX: C901 McCabe complexity 11
 
         with gophermap.open("r") as f:
@@ -53,7 +58,7 @@ class CorePlugin(BasePlugin):
                     arg = line[1:].split(" ", 1)[0]
 
                     if arg and arg[0] == "/":
-                        path = resolvepath(root, arg)
+                        path = resolvepath(self.rootdir, arg)
                     else:
                         path = resolvepath(gophermap.parent, arg)
 
@@ -63,15 +68,18 @@ class CorePlugin(BasePlugin):
                         with NamedTemporaryFile() as f:
                             f.write(execute(req, res, line[1:], cwd=str(gophermap.parent)))
                             f.seek(0)
-                            self.handle_gophermap(req, res, Path(f.name), root)
+                            self.handle_gophermap(req, res, Path(f.name))
                     elif is_file(path):
-                        self.handle_gophermap(req, res, path, root)
+                        self.handle_gophermap(req, res, path)
                     else:
                         res.add_error("Resource not found!")
                 elif line == "*":
-                    path = root = gophermap.parent
-                    self.handle_directory(req, res, path, root)
+                    path = gophermap.parent
+                    self.handle_directory(req, res, path)
                     return
+                elif line[0] == "3":
+                    parts = line.split("\t")
+                    res.add_error(parts[0][1:])
                 elif "\t" in line:
                     parts = line.split("\t")
                     if len(parts) < 4:
@@ -90,7 +98,7 @@ class CorePlugin(BasePlugin):
                 else:
                     res.add_text(line)
 
-    def handle_directory(self, req, res, path, root):
+    def handle_directory(self, req, res, path):
         ignore_patterns = IGNORE_PATTERNS[:]
 
         gopherignore = path.joinpath(".gopherignore")
@@ -99,7 +107,7 @@ class CorePlugin(BasePlugin):
                 for line in f:
                     ignore_patterns.append(line.strip())
 
-        if path != root:
+        if path != self.rootdir:
             type, name = "1", ".."
             selector = "/".join(req.selector.rstrip("/").split("/")[:-1]) or "/"
             res.add_link(type, name, selector)
@@ -123,9 +131,10 @@ class CorePlugin(BasePlugin):
         filename = str(path)
         self.server.streams[channel] = (req, File(filename, channel=channel).register(self))
 
-    def handle_executable(self, req, res, path):
+    def handle_executable(self, req, res, path, *args):
         res.stream = True
-        self.fire(task(execute, req, res, str(path), cwd=str(path.parent)), "workers")
+        args = " ".join((str(path),) + args)
+        self.fire(task(execute, req, res, args, cwd=str(path.parent)), "workers")
 
     @handler("caps")
     def on_caps(self, caps):
@@ -139,12 +148,15 @@ class CorePlugin(BasePlugin):
 
     @handler("task_success", channel="workers")
     def on_task_success(self, evt, val):
-        fn, req, res, path = evt.args
+        req = evt.args[1]
+
         self.fire(write(req.sock, val))
         self.fire(close(req.sock))
 
-    @handler("request")
+    @handler("request")  # noqa
     def on_request(self, event, req, res):
+        # XXX: C901 McCabe complexity 10
+
         parts = req.selector.split("/")
 
         if len(parts) > 1 and parts[1] and parts[1][0] == "~":
@@ -155,22 +167,30 @@ class CorePlugin(BasePlugin):
             path = resolvepath(root, req.selector)
 
         if not exists(path):
-            res.add_error("Resource not found!")
+            parent = path.parent
+            gophermap = parent.joinpath("gophermap")
+
+            if is_executable(gophermap):
+                self.handle_executable(req, res, gophermap, path.name)
+            elif is_executable(parent) and not is_dir(parent):
+                self.handle_executable(req, res, parent, path.name)
+            else:
+                res.add_error("Resource not found!")
         elif is_dir(path):
             gophermap = path.joinpath("gophermap")
 
             if is_executable(gophermap):
                 self.handle_executable(req, res, gophermap)
             elif is_file(gophermap):
-                self.handle_gophermap(req, res, gophermap, root)
+                self.handle_gophermap(req, res, gophermap)
             else:
-                self.handle_directory(req, res, path, root)
+                self.handle_directory(req, res, path)
         elif is_executable(path):
             self.handle_executable(req, res, path)
         else:
             gophermap = path.with_suffix(".gophermap")
 
             if is_file(gophermap):
-                self.handle_gophermap(req, res, gophermap, root)
+                self.handle_gophermap(req, res, gophermap)
             else:
                 self.handle_file(req, res, path)
