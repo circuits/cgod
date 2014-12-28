@@ -7,10 +7,12 @@
 
 
 import os
+import sys
 import stat
 from re import sub
 from operator import itemgetter
 from subprocess import check_output
+from traceback import format_exception
 
 
 from funcy import ignore
@@ -19,12 +21,21 @@ from funcy import ignore
 EXEC_MASK = stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH
 
 
-def execute(req, res, *args, **kwargs):
+def format_error():
+    etype, evalue, tb = sys.exc_info()
+    traceback = "\r\n".join(
+        ("i{}".format(line) for line in format_exception(etype, evalue, tb))
+    )
+    return "3{}{}\terror.host\t0\r\n{}".format(etype.__name__, evalue, traceback)
+
+
+def execute(req, res, args, **kwargs):
     kwargs.update(env=req.environ, shell=True)
+
     try:
-        return check_output(*args, **kwargs)
-    except Exception as error:
-        return "ERROR: {}".format(error)
+        return check_output(args, **kwargs)
+    except:
+        return format_error()
 
 
 @ignore(OSError, False)
@@ -53,7 +64,7 @@ def iterdir(path):
         tmp.sort()
         return map(itemgetter(1), tmp)
     except OSError:
-        return
+        return []
 
 
 def normalize(path):
@@ -85,7 +96,10 @@ def resolvepath(root, path):
     if path and path[0] == "/":
         path = path[1:]
 
-    return root.joinpath(path)
+    try:
+        return root.joinpath(path).resolve()
+    except OSError:
+        return root.joinpath(path)
 
 
 def which(program):
