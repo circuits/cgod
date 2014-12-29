@@ -92,10 +92,23 @@ class Sessions(BaseComponent):
         chown(self.path, self.uid, self.gid)
         chmod(self.path, 0666)
 
-    def new(self):
+    def new(self, address):
+        """Return a new, existing or known unique Session ID (sid)
+
+        If the address is an IPv6 address; use it as a uuid.
+        Otherwise find an existing empty session and use it's uuid.
+        Else create a new uuid.
+
+        This is to ensure we don't fill up our memory with wasted sessions and uuids.
+        """
+
+        if ":" in address:
+            return uuid(address)
+
         for k, v in self.data.iteritems():
             if not v:
                 return k
+
         return uuid()
 
     def get(self, sid):
@@ -118,7 +131,7 @@ class SessionsPlugin(BasePlugin):
         if "+" in req.selector:
             req.selector, req.sid = req.selector.split("+", 1)
         else:
-            req.sid = self.sessions.new()
+            req.sid = self.sessions.new(req.remote_addr[0])
 
         req.environ["SID"] = req.sid
 
