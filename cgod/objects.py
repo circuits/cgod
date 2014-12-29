@@ -34,27 +34,23 @@ class Request(object):
         except:
             self.remote_addr = "169.254.0.1", 0
 
-    def __repr__(self):
-        return "<Request(host={}, port={}, selector={}, query={})>".format(
-            self.remote_addr[0], self.remote_addr[1], self.selector, self.query
-        )
-
-    @property
-    def environ(self):
-        return {
+        self.environ = {
             "USER": getpwuid(geteuid()).pw_name,
             "PEER": self.remote_addr[0],
             "SELECTOR": self.selector,
             "QUERY": self.query,
-            # XXX: Make SCRIPT_NAME actually point to the "executing" CGI.
             "SCRIPT_NAME": self.selector,
             "SERVER_HOST": self.server.host,
             "SERVER_PORT": str(self.server.port),
             "SERVER_VERSION": VERSION,
             "CHARSET": self.server.encoding,
             "DOCUMENT_ROOT": str(self.server.rootdir),
-
         }
+
+    def __repr__(self):
+        return "<Request(host={}, port={}, selector={}, query={})>".format(
+            self.remote_addr[0], self.remote_addr[1], self.selector, self.query
+        )
 
 
 class Response(object):
