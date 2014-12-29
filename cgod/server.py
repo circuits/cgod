@@ -14,8 +14,8 @@ import grp
 from logging import getLogger
 
 
-from circuits.net.sockets import TCPServer
 from circuits.net.events import close, write
+from circuits.net.sockets import TCPServer, TCP6Server
 from circuits import handler, BaseComponent, Component
 
 from pathlib import Path
@@ -90,9 +90,14 @@ class Server(Component):
 
         DropPrivileges(self.config["user"], self.config["group"]).register(self)
 
-        self.transport = TCPServer(
-            self.bind, channel=self.channel
-        ).register(self)
+        if config["ipv6"]:
+            self.transport = TCP6Server(
+                self.port, channel=self.channel
+            ).register(self)
+        else:
+            self.transport = TCPServer(
+                self.bind, channel=self.channel
+            ).register(self)
 
         self.protocol = Gopher(self).register(self)
         self.dispatcher = Dispatcher().register(self)

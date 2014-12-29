@@ -103,6 +103,13 @@ class Config(reprconf.Config):
         )
 
         add(
+            "-6" "--ipv6",
+            action="store_true",
+            default=False, dest="ipv6",
+            help="Enable IPv6 support"
+        )
+
+        add(
             "-e", "--encoding",
             action="store", type=str,
             default="UTF-8", dest="encoding",
