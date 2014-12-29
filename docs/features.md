@@ -7,6 +7,7 @@ cgod is a feature-rich Gopher daemon with the following features:
 * capabilities support (`caps.txt`)
 * automatic directory listing
 * executable gophermap(s)
+* .gopherignore support
 * CGI scripts support
 * IPv4 and IPv6
 * sessions
