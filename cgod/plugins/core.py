@@ -137,10 +137,12 @@ class CorePlugin(BasePlugin):
         filename = str(path)
         self.server.streams[channel] = (req, File(filename, channel=channel).register(self))
 
-    def handle_executable(self, req, res, path, *args):
+    def handle_executable(self, req, res, script, *args):
+        if args:
+            req.environ["SCRIPT_NAME"] = "/".join(req.selector.split("/")[:-(len(args))])
         res.stream = True
-        args = " ".join((str(path),) + args)
-        self.fire(task(execute, req, res, args, cwd=str(path.parent)), "workers")
+        args = " ".join((str(script),) + args)
+        self.fire(task(execute, req, res, args, cwd=str(script.parent)), "workers")
 
     @handler("caps")
     def on_caps(self, caps):
