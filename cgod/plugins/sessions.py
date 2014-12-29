@@ -131,12 +131,14 @@ class SessionsPlugin(BasePlugin):
         res.add_text("Session Data:")
         for k, v in req.session.iteritems():
             res.add_text(" {}: {}".format(k, v))
+        res.add_text("-" * 66)
+        res.add_link("1", "List all Sessions", "/sessions")
 
     @selector("/sessions")
     def on_sessions(self, event, req, res):
         res.add_text("Active Sessions:")
         sessions = self.sessions.keys()
         for sid in sessions:
-            res.add_text(sid)
+            res.add_link("1", sid, "/session+{}".format(sid))
         res.add_line()
         res.add_text("Total: {}".format(len(sessions)))
