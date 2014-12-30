@@ -1,0 +1,136 @@
+#!/usr/bin/env python
+
+
+import socket
+import collections
+from urllib import unquote
+
+
+from circuits import Event, Component
+from circuits.web import Controller, Logger, Server, Static
+
+from jinja2 import Environment, FileSystemLoader
+
+
+TITLE = "ShortCircuit Gopher"
+DOMAIN = "daisy.shortcircuit.net.au"
+PORT = 70
+
+TYPES = {
+    "0": "(TXT)",
+    "1": "(DIR)",
+    "i": " ",
+    "7": " ",
+    "h": "(URL)",
+    "s": "(SND)",
+    "g": "(GIF)",
+    "I": "(PIC)",
+    "9": "(BIN)",
+    "5": "(ARC)",
+}
+
+MIME = {
+    "0": "text/plain",
+    "s": "audio/unknown",
+    "I": "image/unknown",
+    "g": "image/gif",
+    "9": "application/octet-stream",
+}
+
+
+defaults = {}
+
+
+def read(server, path="", port=70):
+    s = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+    s.connect((server, port))
+    f = s.makefile()
+    f.write(path + "\r\n")
+    f.flush()
+    return f
+
+
+def gophersplit(server, path="", port=70):
+    path = unquote(path)
+
+    Row = collections.namedtuple(
+        "Row", ("item", "text", "selector", "domain", "port"))
+    data = read(server, path, port).read()
+    data = [row.split("\t") for row in data.split("\r\n") if "\t" in row]
+    for i in range(len(data)):
+        data[i] = [data[i][0][0], data[i][0][1:]] + data[i][1:]
+        data[i] = Row(*data[i])
+    return data
+
+
+def get_type(s):
+    return TYPES.get(s, "(%s)" % s)
+
+
+class render(Event):
+    """render Event"""
+
+
+class JinjaRenderer(Component):
+
+    channel = "web"
+
+    def init(self, env, defaults):
+        self.env = env
+        self.defaults = defaults
+
+        self.env.filters["get_type"] = get_type
+
+    def render(self, name, **data):
+        context = self.defaults.copy()
+        context.update(data)
+        template = self.env.get_template("{0:s}.html".format(name))
+
+        return template.render(**context)
+
+
+class Root(Controller):
+
+    def GET(self, *args, **kwargs):
+        if not args:
+            data = gophersplit(DOMAIN, "", PORT)
+            return self.fire(render("menu", rows=data, title=TITLE), "web")
+
+        _, selector = self.request.path.split("/", 1)
+        item_type, selector = selector[0], selector[1:]
+
+        if item_type == "1":
+            data = gophersplit(DOMAIN, selector, PORT)
+            return self.fire(render("menu", rows=data, title=TITLE), "web")
+        else:
+            mime = MIME.get(item_type, "application/octet-stream")
+            f = read(DOMAIN, selector, PORT)
+
+            def generate():
+                while True:
+                    data = f.read(8192)
+                    if not data:
+                        break
+                    yield data
+
+            self.response.headers["Content-Type"] = mime
+
+            return generate()
+
+
+def main():
+    app = Server(("0.0.0.0", 8000))
+
+    Logger().register(app)
+
+    env = Environment(loader=FileSystemLoader("templates"))
+    JinjaRenderer(env, defaults).register(app)
+
+    Root().register(app)
+    Static(path="/static", docroot="static").register(app)
+
+    app.run()
+
+
+if __name__ == "__main__":
+    main()
