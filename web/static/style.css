@@ -1,0 +1,26 @@
+body {
+    background: black;
+    padding: 2em;
+}
+
+table {
+    padding: 0;
+    border-spacing: 1em 0;
+}
+
+td {
+    font-family: monospace;
+    white-space: pre;
+    color: #D0D0D0;
+    font-size: 200%;
+    padding: 0;
+}
+
+a {
+    color: #00D000;
+    text-decoration: none;
+}
+
+a:hover {
+    color: yellow;
+}
