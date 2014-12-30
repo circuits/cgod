@@ -1,4 +1,5 @@
 funcy
+jinja2
 bidict
 cidict
 pathlib
