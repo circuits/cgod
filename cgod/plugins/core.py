@@ -42,7 +42,7 @@ class CorePlugin(BasePlugin):
 
         ignore = []
 
-        with gophermap.open("r") as f:
+        with gophermap.open("r", encoding=self.server.encoding) as f:
             for line in f:
                 line = line.strip("\r\n")
 
