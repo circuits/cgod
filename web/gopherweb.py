@@ -96,8 +96,11 @@ class Root(Controller):
             data = gophersplit(DOMAIN, "", PORT)
             return self.fire(render("menu", rows=data, title=TITLE), "web")
 
-        _, selector = self.request.path.split("/", 1)
-        item_type, selector = selector[0], selector[1:]
+        if len(args) > 1:
+            _, selector = self.request.path.split("/", 1)
+            item_type, selector = selector[0], selector[1:]
+        else:
+            item_type, selector = "0", self.request.path
 
         if item_type == "1":
             data = gophersplit(DOMAIN, selector, PORT)
