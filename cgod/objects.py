@@ -20,6 +20,17 @@ from . import __name__, __version__
 
 VERSION = "{} {}".format(__name__, __version__)
 
+STATUS_CODES = {
+    200: "OK",
+    301: "Moved Permanently",
+    303: "See Other",
+    400: "Bad Request",
+    401: "Unauthorized",
+    403: "Forbidden",
+    404: "Not Found",
+    500: "Internal Server Error",
+}
+
 
 class Request(object):
 
@@ -59,19 +70,43 @@ class Response(object):
         self.req = req
 
         self._lines = []
+        self._error = ""
+        self._status = 200
         self._stream = False
 
     def __len__(self):
         return sum(map(len, self._lines))
 
     def __repr__(self):
-        return "<Response(bytes={}, stream={})>".format(len(self), self.stream)
+        return "<Response(bytes={}, error={}, status={}, stream={})>".format(
+            len(self), self.error, self.status, self.stream
+        )
 
     def __unicode__(self):
         return u"{}\r\n.".format(u"\r\n".join(self._lines))
 
     def __str__(self):
         return unicode(self).encode(self.req.server.encoding)
+
+    @property
+    def error(self):
+        return self._error
+
+    @error.setter
+    def error(self, (status, error)):
+        self._status = status
+        self._error = error
+
+        self._lines = []
+        self.add_error("{} {}: {}".format(status, STATUS_CODES[status], error))
+
+    @property
+    def status(self):
+        return self._status
+
+    @status.setter
+    def status(self, status):
+        self._status = status
 
     @property
     def stream(self):
