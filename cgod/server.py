@@ -136,6 +136,16 @@ class Server(Component):
             self.fire(write(res.req.sock, bytes(res)))
             self.fire(close(res.req.sock))
 
+    def response_failure(self, event, evt, val):
+        res = evt.args[0]
+        self.fire(write(res.req.sock, bytes(res)))
+        self.fire(close(res.req.sock))
+
+    def request_failure(self, event, evt, val):
+        req, res = evt.args
+        self.fire(write(req.sock, bytes(res)))
+        self.fire(close(req.sock))
+
     @handler("read", channel="*")
     def file_read(self, event, *args):
         # Ignore the server read event(s)

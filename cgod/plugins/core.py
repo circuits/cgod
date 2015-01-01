@@ -74,7 +74,7 @@ class CorePlugin(BasePlugin):
                     elif is_file(path):
                         self.handle_gophermap(req, res, path)
                     else:
-                        res.add_error("Resource not found!")
+                        res.error = (404, "Resource not found!")
                 elif line[0] == "-":
                     ignore.append(line[1:])
                 elif line == "*":
@@ -183,7 +183,7 @@ class CorePlugin(BasePlugin):
             elif is_executable(parent) and not is_dir(parent):
                 self.handle_executable(req, res, parent, path.name)
             else:
-                res.add_error("Resource not found!")
+                res.error = (404, "Resource not found!")
         elif is_dir(path):
             gophermap = path.joinpath("gophermap")
 
