@@ -8,9 +8,21 @@
 So we only have to maintain version information in one place!
 """
 
+
+from time import strftime
+from subprocess import check_output
+
+
+def generate_version():
+    try:
+        return check_output("hg id -i", shell=True).strip().rstrip("+")
+    except:
+        return "{}-dev".format(strftime("%Y%m%d"))
+
+
 version_info = (0, 0, 1, "dev")  # (major, minor, patch, dev?)
 version = (
     ".".join(map(str, version_info))
     if version_info[-1] != "dev"
-    else "dev"
+    else generate_version()
 )
