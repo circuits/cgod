@@ -22,8 +22,8 @@ from pathlib import Path
 from bidict import bidict
 
 
+import cgod
 from .protocol import Gopher
-from .version import version
 from .dispatcher import Dispatcher
 
 
@@ -104,8 +104,9 @@ class Server(Component):
 
     def ready(self, server, bind):
         self.logger.info(
-            "cgod v{0:s} ready! Listening on: {1:s}\n".format(
-                version, "{0:s}:{1:d}".format(*bind)
+            "{} {} ready! Listening on: {}\n".format(
+                cgod.__name__, cgod.__version__,
+                "{0:s}:{1:d}".format(*bind)
             )
         )
 
