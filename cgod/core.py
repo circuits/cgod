@@ -34,8 +34,8 @@ class Core(BaseComponent):
             init_args=(self.server, self.config)
         ).register(self)
 
-        self.logger.info("Loading plugins...")
-        for plugin in self.config["plugins"]:
+        self.logger.info("Loading plugins ...")
+        for plugin in self.config.get("plugins", ["core"]):
             self.plugins.load(plugin)
 
     @handler("signal", channel="*")
