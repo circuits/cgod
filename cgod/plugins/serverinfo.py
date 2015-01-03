@@ -37,6 +37,8 @@ class ServerInfoPlugin(BasePlugin):
         caps.add("ServerVersion", self.version)
         caps.add("ServerDescription", self.description)
 
+        caps.add("DefaultEncoding", self.server.encoding)
+
     @selector("/version")
     def on_hello(self, event, req, res):
         res.add_text(self.version)
