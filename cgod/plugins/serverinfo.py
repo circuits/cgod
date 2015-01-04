@@ -37,7 +37,7 @@ class ServerInfoPlugin(BasePlugin):
         caps.add("ServerVersion", self.version)
         caps.add("ServerDescription", self.description)
 
-        caps.add("DefaultEncoding", self.server.encoding)
+        caps.add("ServerDefaultEncoding", self.server.encoding)
 
     @handler("request", priority=2)
     def on_request(self, req, res):
