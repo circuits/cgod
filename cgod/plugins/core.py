@@ -10,6 +10,7 @@ __version__ = "0.0.1"
 __author__ = "James Mills, prologic at shortcircuit dot net dot au"
 
 
+from os import getcwd
 from uuid import uuid4 as uuid
 from tempfile import NamedTemporaryFile
 
@@ -35,7 +36,7 @@ class CorePlugin(BasePlugin):
     def init(self, server, config):
         super(CorePlugin, self).init(server, config)
 
-        self.rootdir = self.config.get("rootdir", Path.cwd())
+        self.rootdir = Path(self.config.get("rootdir", getcwd()))
 
     def handle_gophermap(self, req, res, gophermap):  # noqa
         # XXX: C901 McCabe complexity 11
