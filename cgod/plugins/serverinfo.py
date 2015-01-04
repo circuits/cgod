@@ -16,6 +16,7 @@ from circuits import handler
 import cgod
 from ..plugin import BasePlugin
 from ..decorators import selector
+from ..utils import get_architecture
 
 
 class ServerInfoPlugin(BasePlugin):
@@ -27,15 +28,24 @@ class ServerInfoPlugin(BasePlugin):
         self.info = self.config.get("serverinfo", {})
         self.host = self.config.get("host", "localhost")
 
-        self.version = "{} {}".format(cgod.__name__, cgod.__version__)
+        self.architecture = get_architecture()
+
+        self.geolocation = self.info.get("geolocation", None)
+
         self.admin = self.info.get("admin", "root@{}".format(self.host))
         self.description = self.info.get("description", "{} Gopherspace".format(self.host))
 
     @handler("caps")
     def on_caps(self, caps):
+        caps.add("ServerSoftware", cgod.__name__)
+        caps.add("ServerSoftwareVersion", cgod.__version__)
+        caps.add("ServerArchitecture", self.architecture)
+
         caps.add("ServerAdmin", self.admin)
-        caps.add("ServerVersion", self.version)
         caps.add("ServerDescription", self.description)
+
+        if self.geolocation is not None:
+            caps.add("ServerGeolocationString", self.geolocation)
 
         caps.add("ServerDefaultEncoding", self.server.encoding)
 
