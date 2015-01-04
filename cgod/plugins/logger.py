@@ -14,6 +14,7 @@ __author__ = "James Mills, prologic at shortcircuit dot net dot au"
 
 
 import datetime
+from urllib import quote
 from email._parseaddr import _monthnames
 
 
@@ -50,7 +51,7 @@ class LoggerPlugin(BasePlugin):
                  "l": "-",
                  "u": getattr(req, "login", None) or "-",
                  "t": formattime(),
-                 "r": "%s%s" % (req.selector, (req.query and "?%s" % req.query) or ""),
+                 "r": quote("%s%s" % (req.selector, (req.query and "?%s" % req.query) or "")),
                  "s": int(res.status),
                  "b": "-" if res.stream else len(res),
                  "f": "-",
