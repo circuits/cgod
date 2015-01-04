@@ -9,24 +9,18 @@
 import os
 import sys
 import stat
+import platform
 from re import sub
 from operator import itemgetter
 from traceback import format_exception
-from subprocess import Popen, PIPE, STDOUT
+from subprocess import check_output, Popen, PIPE, STDOUT
 
 
 from funcy import ignore
+from pathlib import Path
 
 
 EXEC_MASK = stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH
-
-
-def format_error():
-    etype, evalue, tb = sys.exc_info()
-    traceback = "\r\n".join(
-        ("i{}".format(line) for line in format_exception(etype, evalue, tb))
-    )
-    return "3{}{}\terror.host\t0\r\n{}".format(etype.__name__, evalue, traceback)
 
 
 def execute(req, res, args, **kwargs):
@@ -43,6 +37,28 @@ def execute(req, res, args, **kwargs):
 @ignore(OSError, False)
 def exists(path):
     return path.exists()
+
+
+def format_error():
+    etype, evalue, tb = sys.exc_info()
+    traceback = "\r\n".join(
+        ("i{}".format(line) for line in format_exception(etype, evalue, tb))
+    )
+    return "3{}{}\terror.host\t0\r\n{}".format(etype.__name__, evalue, traceback)
+
+
+def get_architecture():
+    dist = platform.dist()
+    mach = platform.machine()
+
+    if dist != ("", "", ""):
+        return "{}/{} {}".format(dist[:2], mach)
+    elif is_file(Path("/usr/bin/crux")):
+        output = check_output("/usr/bin/crux", shell=True).strip()
+        parts = output.split(" ")
+        return "{}/{} {}".format(parts[0], parts[2], mach)
+    else:
+        return "Unknown {}".format(mach)
 
 
 @ignore(OSError, False)
