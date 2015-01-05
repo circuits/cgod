@@ -95,7 +95,11 @@ class CorePlugin(BasePlugin):
 
                     selector = selector or name
 
-                    if type != "h" and host in (None, req.server.host) and selector[0] != "/":
+                    isrelative = selector[0] != "/"
+                    islocal = host in (None, req.server.host)
+                    isurl = type == "h" and selector[:4].lower() == "url:"
+
+                    if islocal and isrelative and (not isurl):
                         slash = "" if req.selector[-1] == "/" else "/"
                         selector = "{}{}{}".format(req.selector, slash, selector or name)
 
