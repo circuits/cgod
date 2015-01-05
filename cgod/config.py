@@ -117,6 +117,13 @@ class Config(reprconf.Config):
         )
 
         add(
+            "-w", "--width",
+            action="store", type=int,
+            default=70, dest="width",
+            help="Sel default page width"
+        )
+
+        add(
             "-r", "--rootdir",
             action="store", type=str,
             default=getcwd(), dest="rootdir",

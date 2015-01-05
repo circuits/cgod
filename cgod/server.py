@@ -68,6 +68,7 @@ class Server(Component):
         self.config = config
 
         self.encoding = self.config["encoding"]
+        self.width = self.config["width"]
         self.debug = self.config["debug"]
 
         self.logger = getLogger(__name__)
