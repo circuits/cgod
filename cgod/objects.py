@@ -55,7 +55,7 @@ class Request(object):
             "SERVER_PORT": str(self.server.port),
             "SERVER_VERSION": VERSION,
             "ENCODING": self.server.encoding,
-            "WIDTH": self.server.width,
+            "WIDTH": str(self.server.width),
             "DOCUMENT_ROOT": str(self.server.rootdir),
         }
 
