@@ -111,26 +111,6 @@ class Server(Component):
             )
         )
 
-    def read(self, sock, data):
-        try:
-            host, port = sock.getpeername()
-        except:
-            return
-
-        self.logger.debug(
-            "I: [{0:s}:{1:d}] {2:s}".format(host, port, repr(data))
-        )
-
-    def write(self, sock, data):
-        try:
-            host, port = sock.getpeername()
-        except:
-            return
-
-        self.logger.debug(
-            "O: [{0:s}:{1:d}] {2:s}".format(host, port, repr(data))
-        )
-
     def response_complete(self, event, evt, val):
         res = evt.args[0]
 
