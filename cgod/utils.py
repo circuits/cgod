@@ -20,7 +20,8 @@ from funcy import ignore
 from pathlib import Path
 
 
-EXEC_MASK = stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH
+WORLD_EXECUTABLE_MASK = stat.S_IXOTH
+WORLD_READABLE_MASK = stat.S_IROTH
 
 
 def execute(req, res, args, **kwargs):
@@ -67,13 +68,18 @@ def is_dir(path):
 
 
 @ignore(OSError, False)
-def is_executable(path):
-    return path.stat().st_mode & EXEC_MASK if path.exists() else False
+def is_file(path):
+    return path.is_file()
 
 
 @ignore(OSError, False)
-def is_file(path):
-    return path.is_file()
+def is_world_executable(path):
+    return path.stat().st_mode & WORLD_EXECUTABLE_MASK if path.exists() else False
+
+
+@ignore(OSError, False)
+def is_world_readable(path):
+    return path.stat().st_mode & WORLD_READABLE_MASK if path.exists() else False
 
 
 def iterdir(path):

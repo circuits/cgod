@@ -53,7 +53,7 @@ class LoggerPlugin(BasePlugin):
                  "t": formattime(),
                  "r": quote("%s%s" % (req.selector, (req.query and "?%s" % req.query) or "")),
                  "s": int(res.status),
-                 "b": "-" if res.stream else len(res),
+                 "b": len(res),
                  "f": "-",
                  "a": "-",
                  }
