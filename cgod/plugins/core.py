@@ -24,7 +24,8 @@ from circuits.net.events import close, write
 
 from ..plugin import BasePlugin
 from ..gophertypes import get_type
-from ..utils import execute, exists, is_dir, is_executable, is_file, iterdir, resolvepath, which
+from ..utils import execute, exists, iterdir, resolvepath, which
+from ..utils import is_dir, is_file, is_world_executable, is_world_readable
 
 
 IGNORE_PATTERNS = ["CSV", "gophermap", "*.bak", "*~", ".*"]
@@ -67,7 +68,7 @@ class CorePlugin(BasePlugin):
 
                     prog = which(arg)
 
-                    if prog is not None or is_executable(path):
+                    if prog is not None or is_world_executable(path):
                         with NamedTemporaryFile() as f:
                             f.write(execute(req, res, line[1:], cwd=str(gophermap.parent)))
                             f.seek(0)
@@ -136,6 +137,11 @@ class CorePlugin(BasePlugin):
             res.add_link(type, name, selector)
 
     def handle_file(self, req, res, path):
+        if not is_world_readable(path):
+            res.error = (403, "Resource Forbidden")
+            return
+
+        res.size = path.stat().st_size
         res.stream = True
 
         channel = uuid()
@@ -161,7 +167,7 @@ class CorePlugin(BasePlugin):
 
     @handler("task_success", channel="workers")
     def on_task_success(self, evt, val):
-        req = evt.args[1]
+        req, res = evt.args[1:3]
 
         self.fire(write(req.sock, val))
         self.fire(close(req.sock))
@@ -183,22 +189,22 @@ class CorePlugin(BasePlugin):
             parent = path.parent
             gophermap = parent.joinpath("gophermap")
 
-            if is_executable(gophermap):
+            if is_world_executable(gophermap):
                 self.handle_executable(req, res, gophermap, path.name)
-            elif is_executable(parent) and not is_dir(parent):
+            elif is_world_executable(parent) and not is_dir(parent):
                 self.handle_executable(req, res, parent, path.name)
             else:
                 res.error = (404, "Resource not found!")
         elif is_dir(path):
             gophermap = path.joinpath("gophermap")
 
-            if is_executable(gophermap):
+            if is_world_executable(gophermap):
                 self.handle_executable(req, res, gophermap)
             elif is_file(gophermap):
                 self.handle_gophermap(req, res, gophermap)
             else:
                 self.handle_directory(req, res, path)
-        elif is_executable(path):
+        elif is_world_executable(path):
             self.handle_executable(req, res, path)
         else:
             gophermap = path.with_suffix(".gophermap")

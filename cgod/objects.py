@@ -70,21 +70,21 @@ class Response(object):
     def __init__(self, req):
         self.req = req
 
-        self._lines = []
-        self._error = ""
+        self._size = 0
+        self._body = []
         self._status = 200
         self._stream = False
 
     def __len__(self):
-        return sum(map(len, self._lines))
+        return self._size or sum(map(len, self._body))
 
     def __repr__(self):
-        return "<Response(bytes={}, error={}, status={}, stream={})>".format(
-            len(self), self.error, self.status, self.stream
+        return "<Response(bytes={}, status={}, stream={})>".format(
+            len(self), self.status, self.stream
         )
 
     def __unicode__(self):
-        return u"{}\r\n.".format(u"\r\n".join(self._lines))
+        return u"{}\r\n.".format(u"\r\n".join(self._body))
 
     def __str__(self):
         return unicode(self).encode(self.req.server.encoding)
@@ -96,9 +96,8 @@ class Response(object):
     @error.setter
     def error(self, (status, error)):
         self._status = status
-        self._error = error
 
-        self._lines = []
+        self._body = []
         self.add_error("{} {}: {}".format(status, STATUS_CODES[status], error))
 
     @property
@@ -108,6 +107,14 @@ class Response(object):
     @status.setter
     def status(self, status):
         self._status = status
+
+    @property
+    def size(self):
+        return self._size
+
+    @size.setter
+    def size(self, size):
+        self._size = size
 
     @property
     def stream(self):
@@ -125,7 +132,7 @@ class Response(object):
 
         string = fill(text, width)
         for line in string.split("\n"):
-            self._lines.append(u"i{}\t\tnull.host\t0".format(line))
+            self._body.append(u"i{}\t\tnull.host\t0".format(line))
 
     def add_para(self, text, width=67):
         """
@@ -144,7 +151,7 @@ class Response(object):
 
         string = fill(text, width)
         for line in string.split("\n"):
-            self._lines.append(u"3{}\t\terror.host\t0".format(line))
+            self._body.append(u"3{}\t\terror.host\t0".format(line))
 
     def add_link(self, type, text, path, host=None, port=None):
         """
@@ -154,32 +161,32 @@ class Response(object):
         host = host or self.req.server.host
         port = port or self.req.server.port
 
-        self._lines.append(u"{}{}\t{}\t{}\t{}".format(type, text, path, host, port))
+        self._body.append(u"{}{}\t{}\t{}\t{}".format(type, text, path, host, port))
 
     def add_telnet(self, text, host, port=23):
         """
         Adds a telnet link, using the arguments provided.
         """
 
-        self._lines.append(u"8{}\t\t{}\t{}" % (text, host, port))
+        self._body.append(u"8{}\t\t{}\t{}" % (text, host, port))
 
     def add_url(self, text, url):
         """
         Adds an external link to any url, not just gopher.
         """
 
-        self._lines.append(u"h{}\tURL:{}\tnull.host\t0".format(text, url))
+        self._body.append(u"h{}\tURL:{}\tnull.host\t0".format(text, url))
 
     def add_title(self, text):
         """
         Adds a title.
         """
 
-        self._lines.append(u"i{}\tTITLE\tnull.host\t0".format(text))
+        self._body.append(u"i{}\tTITLE\tnull.host\t0".format(text))
 
     def add_line(self):
         """
         Adds a blank line.
         """
 
-        self._lines.append(u"i\t\tnull.host\t0")
+        self._body.append(u"i\t\tnull.host\t0")
