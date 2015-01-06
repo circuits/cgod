@@ -15,6 +15,7 @@ from warnings import warn
 from os.path import exists
 from os import environ, getcwd
 from ConfigParser import ConfigParser
+from os.path import abspath, isabs, expanduser
 from argparse import ArgumentParser, ArgumentDefaultsHelpFormatter, FileType
 
 
@@ -32,6 +33,23 @@ class Config(reprconf.Config):
 
         self.parse_environ()
         self.parse_options()
+        self.check_options()
+
+    def check_options(self):
+        path_options = ("config", "logfile", "pidfile", "rootdir", "userdir",)
+        file_options = (
+            ("logfile", "w",),
+        )
+
+        for path_option in path_options:
+            value = self.get(path_options, None)
+            if value and not isabs(value):
+                self[path_options] = abspath(expanduser(value))
+
+        for file_option, file_mode in file_options:
+            value = self.get(file_option, None)
+            if value and not isinstance(value, file):
+                self[file_option] = open(value, file_mode)
 
     def parse_environ(self):
         """Check the environment variables for options."""
