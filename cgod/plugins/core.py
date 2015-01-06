@@ -96,7 +96,7 @@ class CorePlugin(BasePlugin):
 
                     selector = selector or name
 
-                    isrelative = selector[0] != "/"
+                    isrelative = selector and selector[0] != "/"
                     islocal = host in (None, req.server.host)
                     isurl = type == "h" and selector[:4].lower() == "url:"
 
