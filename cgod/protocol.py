@@ -9,6 +9,9 @@ Implements the Gopher Protocol and handles the parsing of requests.
 """
 
 
+from collections import defaultdict
+
+
 from circuits import Component
 
 
@@ -22,9 +25,20 @@ class Gopher(Component):
 
     def init(self, server):
         self.server = server
+        self.buffers = defaultdict(str)
+
+    def connect(self, sock, host, port):
+        self.buffers[sock] = ""
+
+    def disconnect(self, sock):
+        del self.buffers[sock]
 
     def read(self, sock, data):
-        data = data.strip()
+        if data[-1] != "\n":
+            self.buffers[sock] += data
+            return
+
+        data = (self.buffers[sock] + data).strip()
 
         if "?" in data:
             selector, query = data.split("?", 1)
