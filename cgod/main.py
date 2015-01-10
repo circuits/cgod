@@ -16,13 +16,13 @@ from os.path import basename
 from logging import getLogger
 
 
-from circuits.app import Daemon
 from circuits import Debugger, Manager, Worker
 
 from procname import setprocname
 
 
 from .core import Core
+from .daemon import Daemon
 from .config import Config
 
 
