@@ -5,7 +5,7 @@ cgod is a Gopher Daemon with a similar feature set to [Gophernicus](gopher://gop
 
 Full documentation can be found on Gopherspace at:
 
-<gopher://arrow.shortcircuit.net.au/1/~prologic/projects/cgod/>
+<gopher://daisy.shortcircuit.net.au/1/~prologic/projects/cgod/>
 
 Installation
 ------------
@@ -31,11 +31,9 @@ Or via a local install:
 
     # cgod -H domain.com -r /var/gopher
 
-> **note**
->
 > It is important to configure the `-H/--hostname` properly and set this to  
 > the hostname that remote Gopher clients will connect to your Gopher server with.
->
+
 For other configuration options:
 
     $ docker run prologic/cgod --help
