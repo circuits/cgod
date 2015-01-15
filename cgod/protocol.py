@@ -27,11 +27,12 @@ class Gopher(Component):
         self.server = server
         self.buffers = defaultdict(str)
 
-    def connect(self, sock, host, port):
+    def connect(self, sock, *args):
         self.buffers[sock] = ""
 
     def disconnect(self, sock):
-        del self.buffers[sock]
+        if sock in self.buffers:
+            del self.buffers[sock]
 
     def read(self, sock, data):
         if data[-1] != "\n":
