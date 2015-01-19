@@ -54,7 +54,7 @@ class URLPlugin(BasePlugin):
     def init(self, server, config):
         super(URLPlugin, self).init(server, config)
 
-        self.timeout = self.config.get(__name__, {}).get("redirect-timeout", 5)
+        self.timeout = self.config.get("url", {}).get("redirect-timeout", 5)
 
     @handler("request", priority=1)
     def on_request(self, event, req, res):
