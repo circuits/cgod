@@ -37,6 +37,5 @@ class RewritePlugin(BasePlugin):
 
     @handler("request", priority=2)
     def on_request(self, event, req, res):
-        import pdb; pdb.set_trace()
         for pattern, replacement in self.rules.values():
             req.selector = sub(pattern, replacement, req.selector)
