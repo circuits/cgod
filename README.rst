@@ -65,3 +65,23 @@ Example Configuration::
     [globals]
     rootdir = '/var/gopher'
     host = 'domain.com'
+
+Demo
+----
+
+A full production version of cgod can be found at the following Gopher URI:
+
+gopher://daisy.shortcircuit.net.au/
+
+This is configured and managed with the following `fig <http://fig.sh>` configuration::
+    
+    cgod:
+        image: prologic/cgod
+        environment:
+          - CGOD_HOST=arrow.shortcircuit.net.au
+          - CGOD_ROOTDIR=/var/gopher
+        volumes:
+          - /home:/home
+          - /var/gopher:/var/gopher
+        ports:
+          - "70:70"
