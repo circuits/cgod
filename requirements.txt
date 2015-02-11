@@ -6,4 +6,5 @@ pathlib
 pymills
 procname
 circuits
+shortuuid
 python-magic

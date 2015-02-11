@@ -44,6 +44,7 @@ setup(
         "pymills",
         "procname",
         "circuits",
+        "shortuuid",
         "python-magic",
     ],
     entry_points={
