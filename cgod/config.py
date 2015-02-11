@@ -36,7 +36,7 @@ class Config(reprconf.Config):
         self.check_options()
 
     def check_options(self):
-        path_options = ("config", "logfile", "pidfile", "rootdir", "userdir",)
+        path_options = ("config", "logfile", "rootdir", "userdir",)
         file_options = (
             ("logfile", "w",),
         )
@@ -84,12 +84,6 @@ class Config(reprconf.Config):
         )
 
         add(
-            "-d", "--daemon", action="store_true", default=False,
-            dest="daemon",
-            help="Run as a daemon"
-        )
-
-        add(
             "-V", "--verbose", action="store_true", default=False,
             dest="verbose",
             help="Enable verbose logging"
@@ -99,12 +93,6 @@ class Config(reprconf.Config):
             "-l", "--logfile", action="store", default="-",
             dest="logfile", metavar="FILE", type=FileType(mode="w"),
             help="Write logs to FILE"
-        )
-
-        add(
-            "-p", "--pidfile", action="store", default="cgod.pid",
-            dest="pidfile", metavar="FILE", type=str,
-            help="Write pid to FILE"
         )
 
         add(

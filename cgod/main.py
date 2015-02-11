@@ -22,7 +22,6 @@ from procname import setprocname
 
 
 from .core import Core
-from .daemon import Daemon
 from .config import Config
 
 
@@ -54,9 +53,6 @@ def main():
             logger=logger,
             events=config["verbose"],
         ).register(manager)
-
-    if config["daemon"]:
-        Daemon(config["pidfile"]).register(manager)
 
     Core(config).register(manager)
 
