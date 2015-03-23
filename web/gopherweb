@@ -122,7 +122,7 @@ class Root(Controller):
 
 
 def main():
-    app = Server(("0.0.0.0", 8000))
+    app = Server(("0.0.0.0", 80))
 
     Logger().register(app)
 
