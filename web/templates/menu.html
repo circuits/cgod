@@ -9,7 +9,7 @@
             {% for row in rows %}
             <tr>
                 <td>{{ row.item | get_type }}</td>
-                <td>{% if row.item == 'h' %}<a href="{{ row.selector.split(':', 1)[1]}}">{% elif row.item != 'i' %}<a href="/{{ row.item }}/{{ row.selector }}">{% endif %}{{ row.text }}{% if row.item != 'i' %}</a>{% endif %}&nbsp;</td>
+                <td>{% if row.item == 'h' %}<a href="{{ row.selector.split(':', 1)[1] if ':' in row.selector else ('/' + row.item + row.selector) }}">{% elif row.item != 'i' %}<a href="/{{ row.item }}{{ row.selector }}">{% endif %}{{ row.text }}{% if row.item != 'i' %}</a>{% endif %}&nbsp;</td>
             </tr>
             {% endfor %}
         </table>
