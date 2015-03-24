@@ -4,6 +4,7 @@
 import socket
 import collections
 from urllib import unquote
+from mimetypes import guess_type
 
 
 from circuits import Event, Component
@@ -42,6 +43,7 @@ defaults = {}
 
 
 def read(server, path="", port=70):
+    # TODO: Use circuits and async I/O here!
     s = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
     s.connect((server, port))
     f = s.makefile()
@@ -106,7 +108,12 @@ class Root(Controller):
             data = gophersplit(DOMAIN, selector, PORT)
             return self.fire(render("menu", rows=data, title=TITLE), "web")
         else:
-            mime = MIME.get(item_type, "application/octet-stream")
+            mime = (
+                filter(None, guess_type(selector))
+                or
+                MIME.get(item_type, "application/octet-stream")
+            )
+
             f = read(DOMAIN, selector, PORT)
 
             def generate():
@@ -122,7 +129,7 @@ class Root(Controller):
 
 
 def main():
-    app = Server(("0.0.0.0", 80))
+    app = Server(("0.0.0.0", 8000))
 
     Logger().register(app)
 
