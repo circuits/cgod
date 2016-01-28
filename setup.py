@@ -13,8 +13,8 @@ setup(
     long_description=open("README.rst", "r").read(),
     author="James Mills",
     author_email="James Mills, prologic at shortcircuit dot net dot au",
-    url="https://bitbucket.org/prologic/cgod",
-    download_url="http://bitbucket.org/prologic/cgod/downloads/",
+    url="https://github.com/prologic/cgod",
+    download_url="http://github.com/prologic/cgod/releases/",
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Environment :: Console",

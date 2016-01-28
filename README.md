@@ -16,7 +16,7 @@ Either pull the prebuilt [Docker](https://docker.com/) image:
 
 Or install from the development repository:
 
-    $ hg clone https://bitbucket.org/prologic/cgod
+    $ git clone https://github.com/prologic/cgod
     $ cd cgod
     $ pip install .
 
@@ -33,9 +33,10 @@ Or via a local install:
 
 > **note**
 >
-> It is important to configure the `-H/--hostname` properly and set this to  
-> the hostname that remote Gopher clients will connect to your Gopher server with.
->
+> It is important to configure the `-H/--hostname` properly and set
+
+this to the hostname that remote Gopher clients will connect to your Gopher server with.
+
 For other configuration options:
 
     $ docker run prologic/cgod --help
@@ -59,7 +60,7 @@ A full production version of cgod can be found at the following Gopher URI:
 
 <gopher://daisy.shortcircuit.net.au/>
 
-This is configured and managed with the following fig \<http://fig.sh\> configuration:
+This is configured and managed with the following fig &lt;http://fig.sh&gt; configuration:
 
     cgod:
         image: prologic/cgod

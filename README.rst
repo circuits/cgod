@@ -9,9 +9,9 @@
 cgod
 ====
 
-cgod is a Gopher Daemon with a similar feature set to `Gophernicus`_ and `Motsognir`_
-and is fully "Dockerized" with `Docker`_. cgod is written in `Python`_ using the `circuits`_
-Application Framework.
+cgod is a Gopher Daemon with a similar feature set to `Gophernicus`_
+and `Motsognir`_ and is fully "Dockerized" with `Docker`_. cgod is written
+in `Python`_ using the `circuits`_ Application Framework.
 
 Full documentation can be found on Gopherspace at:
 
@@ -27,7 +27,7 @@ Either pull the prebuilt `Docker`_ image::
 
 Or install from the development repository::
     
-    $ hg clone https://bitbucket.org/prologic/cgod
+    $ git clone https://github.com/prologic/cgod
     $ cd cgod
     $ pip install .
 
@@ -44,8 +44,9 @@ Or via a local install::
     # cgod -H domain.com -r /var/gopher
 
 
-.. note:: It is important to configure the ``-H/--hostname`` properly and set this to
-          the hostname that remote Gopher clients will connect to your Gopher server with.
+.. note:: It is important to configure the ``-H/--hostname`` properly and set
+this to the hostname that remote Gopher clients will connect to your Gopher
+server with.
 
 
 For other configuration options::
@@ -57,8 +58,9 @@ or::
     $ cgod --help
 
 
-A path to a configuration file can also be specified with the ``-c/--config`` option.
-The file format is INI-style and takes all of the same long options as the command-line.
+A path to a configuration file can also be specified with the ``-c/--config``
+option.  The file format is INI-style and takes all of the same long options
+as the command-line.
 
 Example Configuration::
     
@@ -73,7 +75,8 @@ A full production version of cgod can be found at the following Gopher URI:
 
 gopher://daisy.shortcircuit.net.au/
 
-This is configured and managed with the following `fig <http://fig.sh>` configuration::
+This is configured and managed with the following `fig <http://fig.sh>`
+configuration::
     
     cgod:
         image: prologic/cgod
