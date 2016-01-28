@@ -15,7 +15,10 @@ from subprocess import check_output
 
 def generate_version():
     try:
-        return check_output("hg id -i", shell=True).strip().rstrip("+")
+        return check_output(
+            "git rev-parse --short HEAD",
+            shell=True
+        ).strip().strip()
     except:
         return "{}-dev".format(strftime("%Y%m%d"))
 
